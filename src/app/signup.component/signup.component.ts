@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, signal } from '@angular/core';
 
 @Component({
   selector: 'app-signup.component',
@@ -7,5 +7,8 @@ import { Component } from '@angular/core';
   styleUrl: './signup.component.scss',
 })
 export class SignupComponent {
-
+   firstName = signal('');
+   lastName  = signal('');
+   
+   
 }
