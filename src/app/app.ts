@@ -9,4 +9,7 @@ import { RouterOutlet } from '@angular/router';
 })
 export class App {
   protected readonly title = signal('expense-tracker');
+
+  msg = signal('Hello Angular');
+
 }
