@@ -1,5 +1,53 @@
-<div class="min-h-screen bg-gray-100 flex items-center justify-center p-4">
+<div class="min-h-screen bg-gray-100 flex flex-col items-center justify-center p-4">
 
+    <!-- Alerts -->
+    <div class="class">
+        @if(error()){
+
+        <div class="bg-white m-4 border border-gray-200 rounded-xl shadow-lg light:bg-neutral-800 dark:border-neutral-700"
+            role="alert" tabindex="-1" aria-labelledby="hs-toast-error-example-label">
+            <div class="flex p-4">
+                <div class="shrink-0">
+                    <svg class="shrink-0 size-4 text-red-500 mt-0.5" xmlns="http://www.w3.org/2000/svg" width="16"
+                        height="16" fill="currentColor" viewBox="0 0 16 16">
+                        <path
+                            d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM5.354 4.646a.5.5 0 1 0-.708.708L7.293 8l-2.647 2.646a.5.5 0 0 0 .708.708L8 8.707l2.646 2.647a.5.5 0 0 0 .708-.708L8.707 8l2.647-2.646a.5.5 0 0 0-.708-.708L8 7.293 5.354 4.646z">
+                        </path>
+                    </svg>
+                </div>
+                <div class="ms-3">
+                    <p id="hs-toast-error-example-label" class="text-sm text-gray-700 dark:text-neutral-500">
+                        {{errorMsg()}}
+                    </p>
+                </div>
+            </div>
+        </div>
+        }
+
+        @if(success()){
+
+        <div class="bg-white m-4 border border-gray-200 rounded-xl shadow-lg light:bg-neutral-800 dark:border-neutral-700"
+            role="alert" tabindex="-1" aria-labelledby="hs-toast-success-example-label">
+            <div class="flex p-4">
+                <div class="shrink-0">
+                    <svg class="shrink-0 size-4 text-teal-500 mt-0.5" xmlns="http://www.w3.org/2000/svg" width="16"
+                        height="16" fill="currentColor" viewBox="0 0 16 16">
+                        <path
+                            d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z">
+                        </path>
+                    </svg>
+                </div>
+                <div class="ms-3">
+                    <p id="hs-toast-success-example-label" class="text-sm text-gray-700 dark:text-neutral-400">
+                        {{successMsg()}}
+                    </p>
+                </div>
+            </div>
+        </div>
+        }
+    </div>
+
+    <!-- Card -->
     <div class="w-full max-w-5xl bg-white rounded-2xl shadow-lg overflow-hidden grid grid-cols-1 md:grid-cols-2">
 
         <!-- Left Section -->
@@ -7,72 +55,108 @@
             <div class="text-white text-center">
                 <h2 class="text-3xl font-bold mb-4">Welcome to FinTrack 💸</h2>
                 <p class="text-blue-100">
-                    Register now to create & track your expenses 💵🤑
+                    Register now to create & track your expenses 💵
                 </p>
             </div>
         </div>
 
-        <!-- Right Login Form -->
+        <!-- Right Form -->
         <div class="p-8 md:p-12">
             <h2 class="text-2xl font-bold text-gray-800 mb-6">
                 Sign Up
             </h2>
 
-            <form class="space-y-5">
+
+            <form class="space-y-5" [formGroup]="myForm" (ngSubmit)="onSubmit()">
+
                 <div>
                     <label class="block text-sm font-medium text-gray-600 mb-1">
                         First Name
                     </label>
-                    <input type="text"
-                        class="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                    <input type="text" formControlName="firstName"
+                        [class.border-red-500]="myForm.get('firstName')?.invalid && myForm.get('firstName')?.touched"
+                        class="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500" />
+
+                    @if (myForm.get('firstName')?.hasError('required') && myForm.get('firstName')?.touched) {
+                    <p class="text-xs text-red-500 mt-1">
+                        first name is required
+                    </p>
+                    }
                 </div>
 
                 <div>
-                    <label class="block text-sm font-medium text-gray-600 mb-1">
-                        Last Name
-                    </label>
-                    <input type="text"
-                        class="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
-                </div>
+                    <label class="block text-sm font-medium text-gray-600 mb-1">Last Name</label>
 
+                    <input type="text" formControlName="lastName"
+                        [class.border-red-500]="myForm.get('lastName')?.invalid && myForm.get('lastName')?.touched"
+                        class="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500" />
+                </div>
+                @if(myForm.get('lastName')?.hasError('required')&& myForm.get('lastName')?.touched){
+                <p class="text-xs text-red-500 mt-1">Last name is required</p>
+                }
 
                 <div>
                     <label class="block text-sm font-medium text-gray-600 mb-1">
                         Email
                     </label>
-                    <input type="email"
-                        class="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                    <input type="email" formControlName="email"
+                        [class.border-red-500]="myForm.get('email')?.invalid && myForm.get('email')?.touched"
+                        class="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500" />
+                        
+                    @if(myForm.get('email')?.hasError('required')&& myForm.get('email')?.touched){
+                    <p class="text-xs text-red-500 mt-1">Email is required</p>
+                    }
                 </div>
 
                 <div>
                     <label class="block text-sm font-medium text-gray-600 mb-1">
                         Password
                     </label>
-                    <input type="password"
-                        class="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                    <input type="password" formControlName="password"
+                        class="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500"
+                        [class.border-red-500]="myForm.get('password')?.invalid && myForm.get('password')?.touched" />
+
+
+                    @if (myForm.get('password')?.hasError('pattern') && myForm.get('password')?.touched) {
+                    <p class="text-xs text-red-500 mt-1">
+                        Must be 8+ characters with uppercase, number, and special character.
+                    </p>
+                    }
                 </div>
+
 
                 <div>
                     <label class="block text-sm font-medium text-gray-600 mb-1">
-                       Confirm Password
+                        Confirm Password
                     </label>
-                    <input type="password" class="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                    <input type="password" formControlName="confirmPassword"
+                        class="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500"
+                        [class.border-red-500]="myForm.hasError('passwordMismatch')&& myForm.get('confirmPassword')?.touched" />
+
+                    @if(myForm.get('confirmPassword')?.hasError('passwordMismatch')&&
+                    myForm.get('confirmPassword')?.touched){
+                    <p class="text-xs text-red-500 mt-1">
+                        Password doesn't match
+                    </p>
+                    }
                 </div>
 
+
+
+                <!-- Disable until valid -->
                 <button type="submit"
-                    class="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 transition">
+                    class="w-full bg-blue-600 disabled:bg-gray-400 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 transition">
                     Sign up
                 </button>
             </form>
 
             <p class="text-sm text-center text-gray-500 mt-6">
                 Already have an account?
-                <a href="#" class="text-blue-600 font-medium hover:underline">
-                    login
+                <a routerLink="/login" class="text-blue-600 font-medium hover:underline">
+                    Login
                 </a>
             </p>
         </div>
 
     </div>
-
 </div>

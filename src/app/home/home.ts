@@ -3,7 +3,7 @@ import { AddExpenseComponent } from '../add-expense.component/add-expense.compon
 
 @Component({
   selector: 'app-home',
-  imports: [AddExpenseComponent],
+  imports: [],
   templateUrl: './home.html',
   styleUrl: './home.scss',
 })

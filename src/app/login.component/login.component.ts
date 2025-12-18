@@ -31,7 +31,7 @@ export class LoginComponent {
     if (!this.formValid()) {
       this.error.set(true);
 
-      this.errorMsg.set('The Form is Invalid! Please check the details once before submitting 😯');
+      this.errorMsg.set('Login Fail ! Please check the details once before submitting 😯');
 
       setTimeout(() => {
         this.error.set(false);
