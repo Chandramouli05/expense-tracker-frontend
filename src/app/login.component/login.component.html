@@ -3,8 +3,7 @@
   <div class="class">
     @if(error()){
 
-    <div
-      class="bg-white border border-gray-200 rounded-xl shadow-lg light:bg-neutral-800 dark:border-neutral-700"
+    <div class="bg-white border border-gray-200 rounded-xl shadow-lg light:bg-neutral-800 dark:border-neutral-700"
       role="alert" tabindex="-1" aria-labelledby="hs-toast-error-example-label">
       <div class="flex p-4">
         <div class="shrink-0">
@@ -26,8 +25,7 @@
 
     @if(success()){
 
-    <div
-      class="bg-white border border-gray-200 rounded-xl shadow-lg light:bg-neutral-800 dark:border-neutral-700"
+    <div class="bg-white border border-gray-200 rounded-xl shadow-lg light:bg-neutral-800 dark:border-neutral-700"
       role="alert" tabindex="-1" aria-labelledby="hs-toast-success-example-label">
       <div class="flex p-4">
         <div class="shrink-0">
@@ -67,17 +65,27 @@
         Sign In
       </h2>
 
-      <form class="space-y-5">
+      <form class="space-y-5" [formGroup]="myForm" (ngSubmit)="onSubmit()">
         <div>
           <label class="block text-sm font-medium text-gray-600 mb-1">Email </label>
-          <input type="email" (input)="email.set($any($event.target).value)"
+          <input type="email" formControlName="email"
+            [class.border-red-500]="myForm.get('email')?.invalid && myForm.get('email')?.touched"
             class="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required />
+
+          @if(myForm.get('email')?.hasError('required')&& myForm.get('email')?.touched){
+          <p class="text-xs text-red-500 mt-1">Email is required</p>
+          }
         </div>
 
         <div>
           <label class="block text-sm font-medium text-gray-600 mb-1">Password</label>
-          <input type="password" (input)="password.set($any($event.target).value)"
+          <input type="password" formControlName="password"
+            [class.border-red-500]="myForm.get('password')?.invalid && myForm.get('password')?.touched"
             class="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
+
+          @if(myForm.get('password')?.hasError('required')&& myForm.get('password')?.touched){
+          <p class="text-xs text-red-500 mt-1">Password is required</p>
+          }
         </div>
 
         <div class="flex items-center justify-end text-sm">
@@ -86,7 +94,7 @@
           </a>
         </div>
 
-        <button type="button" (click)="submit()"
+        <button type="submit"
           class="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 transition">
           Login
         </button>

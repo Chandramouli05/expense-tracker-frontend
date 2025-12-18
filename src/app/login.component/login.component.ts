@@ -1,56 +1,56 @@
 import { Component, computed, effect, signal } from '@angular/core';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-login.component',
-  imports: [RouterLink],
+  imports: [RouterLink, ReactiveFormsModule],
   standalone: true,
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss',
 })
 export class LoginComponent {
-  email = signal(' ');
-  password = signal(' ');
+  myForm!: FormGroup;
 
   error = signal(false);
   errorMsg = signal('');
-
   success = signal(false);
   successMsg = signal('');
 
-  emailValid = computed(() => this.email().includes('@') && this.email().length > 5);
-  passwordValid = computed(() => this.password().length >= 8);
-
-  formValid = computed(() => this.emailValid() && this.passwordValid());
-
-  constructor(private router: Router) {
-    effect(() => console.log('Form Valid:', this.formValid()));
+  constructor(private route: Router, private fb: FormBuilder) {
+    this.myForm = this.fb.group({
+      email: ['', [Validators.required, Validators.email]],
+      password: ['', Validators.required],
+    });
   }
 
-  submit() {
-    if (!this.formValid()) {
+  onSubmit() {
+    if (this.myForm.invalid) {
       this.error.set(true);
-
-      this.errorMsg.set('Login Fail ! Please check the details once before submitting 😯');
-
+      this.errorMsg.set('Login Invalid! check Email/Password');
       setTimeout(() => {
         this.error.set(false);
       }, 4000);
       return;
     }
 
-    console.log({
-      email: this.email(),
-      password: this.password(),
-    });
-
-    if (this.email() === 'admin@gmail.com' && this.password() === '12345678') {
+    const { email, password } = this.myForm.value;
+    if (email === 'admin@gmail.com' && password === 'Admin@1234') {
       this.success.set(true);
-      this.successMsg.set('Login Successful!✅🔓');
+      this.successMsg.set('Login Successful');
+      setTimeout(() => {
+        this.success.set(false);
+        this.route.navigate(['/home']);
+      }, 4000);
+    } else {
+      this.error.set(true);
+      this.errorMsg.set('Invalid Email or Password');
 
       setTimeout(() => {
-        this.router.navigate(['/home']);
-      }, 3000);
+        this.error.set(false);
+      }, 4000);
     }
+
+    console.log(this.myForm.value);
   }
 }
