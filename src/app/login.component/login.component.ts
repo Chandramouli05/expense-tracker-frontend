@@ -1,6 +1,7 @@
 import { Component, computed, effect, signal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
+import { AuthService } from '../services/auth-service/auth-service';
 
 @Component({
   selector: 'app-login.component',
@@ -17,7 +18,10 @@ export class LoginComponent {
   success = signal(false);
   successMsg = signal('');
 
-  constructor(private route: Router, private fb: FormBuilder) {
+  showForgotModal = signal(false);
+  fwdEmail = signal('');
+
+  constructor(private route: Router, private fb: FormBuilder, private authService: AuthService) {
     this.myForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
       password: ['', Validators.required],
@@ -34,23 +38,58 @@ export class LoginComponent {
       return;
     }
 
-    const { email, password } = this.myForm.value;
-    if (email === 'admin@gmail.com' && password === 'Admin@1234') {
-      this.success.set(true);
-      this.successMsg.set('Login Successful');
-      setTimeout(() => {
-        this.success.set(false);
-        this.route.navigate(['/home']);
-      }, 4000);
-    } else {
+    this.authService.login(this.myForm.value).subscribe({
+      next: (res: any) => {
+        localStorage.setItem('token', res.token);
+        localStorage.setItem('email', res.email);
+
+        this.success.set(true);
+        this.successMsg.set('Login Successful');
+        setTimeout(() => {
+          this.success.set(false);
+          this.route.navigate(['/home']);
+        }, 2000);
+      },
+      error: (err) => {
+        this.error.set(true);
+        this.errorMsg.set(err.error?.message || 'Invalid Email or Password');
+
+        setTimeout(() => {
+          this.error.set(false);
+        }, 4000);
+      },
+    });
+  }
+
+  openModal() {
+    console.log('working');
+    this.error.set(false);
+    this.showForgotModal.set(true);
+  }
+
+  closeModal() {
+    this.showForgotModal.set(false);
+    this.fwdEmail.set('');
+  }
+
+  sendResetLink() {
+    if (this.fwdEmail().trim() === '') {
       this.error.set(true);
-      this.errorMsg.set('Invalid Email or Password');
+      this.errorMsg.set('Please Enter Email!');
 
       setTimeout(() => {
         this.error.set(false);
-      }, 4000);
+      }, 3000);
+      return;
     }
 
-    console.log(this.myForm.value);
+    this.fwdEmail();
+    this.success.set(true);
+    this.successMsg.set('Password reset link sent!');
+    this.closeModal();
+
+    setTimeout(() => {
+      this.success.set(false);
+    }, 4000);
   }
 }

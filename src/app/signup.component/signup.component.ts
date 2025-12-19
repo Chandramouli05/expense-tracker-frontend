@@ -9,6 +9,7 @@ import {
   AbstractControl,
   ValidationErrors,
 } from '@angular/forms';
+import { AuthService } from '../services/auth-service/auth-service';
 
 @Component({
   selector: 'app-signup.component',
@@ -24,7 +25,7 @@ export class SignupComponent {
   success = signal(false);
   successMsg = signal('');
 
-  constructor(private route: Router, private fb: FormBuilder) {
+  constructor(private route: Router, private fb: FormBuilder, private authService: AuthService) {
     const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
 
     this.myForm = this.fb.group(
@@ -59,22 +60,35 @@ export class SignupComponent {
     return null;
   };
 
+
   onSubmit() {
     if (this.myForm.invalid) {
       this.error.set(true);
       this.errorMsg.set('Please fix the errors in the form.');
       setTimeout(() => {
         this.error.set(false);
-      }, 6000);
+      }, 4000);
       return;
     }
 
-    this.success.set(true);
-    this.successMsg.set(`Registration Successful`);
-    setTimeout(() => {
-      this.success.set(false);
-      this.route.navigate(['/login']);
+    this.authService.signup(this.myForm.value).subscribe({
+      next: () => {
+        this.success.set(true);
+        this.successMsg.set(`Registration Successful`);
+        setTimeout(() => {
+          this.success.set(false);
+          this.route.navigate(['/login']);
+        },6000);
+      },
+
+      error: (err) => {
+        this.error.set(true);
+        this.errorMsg.set(err.error?.message || 'Try again later');
+
+        setTimeout(() => {
+          this.error.set(false);
+        }, 4000);
+      },
     });
-    console.log(this.myForm.value);
   }
 }
