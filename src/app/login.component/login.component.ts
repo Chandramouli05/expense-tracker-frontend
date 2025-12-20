@@ -41,7 +41,7 @@ export class LoginComponent {
     this.authService.login(this.myForm.value).subscribe({
       next: (res: any) => {
         localStorage.setItem('token', res.token);
-        localStorage.setItem('email', res.email);
+        localStorage.setItem('firstName', JSON.stringify(res.user.firstName));
 
         this.success.set(true);
         this.successMsg.set('Login Successful');

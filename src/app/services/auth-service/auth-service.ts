@@ -20,12 +20,6 @@ export class AuthService {
   }
 
   getUser() {
-    const token = localStorage.getItem('token');
-
-    return this.http.get<User>(`${this.apiLink}/getuser`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
+    return this.http.get<User>(`${this.apiLink}/getuser`);
   }
 }

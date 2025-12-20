@@ -18,14 +18,21 @@ interface LoggedInUser {
 })
 export class Home implements OnInit {
   firstName = signal('');
+  userList = [{
+   name: 'chandramoulli',
+   age:24,
+   city:'chennai'
+  }]
 
   constructor(private authService: AuthService, private route: Router) {}
 
   ngOnInit(): void {
+    let firstName  = JSON.parse(localStorage.getItem('firstName') ?? '""');
+    console.log(firstName);
+    
     this.authService.getUser().subscribe({
-      next: (user: User) => {
-        console.log('USER RESPONSE:', user);
-        this.firstName.set(user.firstName);
+      next: () => {
+       this.firstName.set(firstName!)
       },
       error: (err) => {
         console.error('GET USER ERROR:', err);
