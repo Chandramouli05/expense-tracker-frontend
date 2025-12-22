@@ -18,21 +18,23 @@ interface LoggedInUser {
 })
 export class Home implements OnInit {
   firstName = signal('');
-  userList = [{
-   name: 'chandramoulli',
-   age:24,
-   city:'chennai'
-  }]
+  userList = [
+    {
+      name: 'chandramoulli',
+      age: 24,
+      city: 'chennai',
+    },
+  ];
 
   constructor(private authService: AuthService, private route: Router) {}
 
   ngOnInit(): void {
-    let firstName  = JSON.parse(localStorage.getItem('firstName') ?? '""');
+    let firstName = JSON.parse(localStorage.getItem('firstName') ?? '""');
     console.log(firstName);
-    
+
     this.authService.getUser().subscribe({
       next: () => {
-       this.firstName.set(firstName!)
+        this.firstName.set(firstName!);
       },
       error: (err) => {
         console.error('GET USER ERROR:', err);
@@ -44,7 +46,7 @@ export class Home implements OnInit {
   logout() {
     if (confirm('Do you want to logout?')) {
       localStorage.removeItem('token');
-      this.route.navigate(['/login']);
+      this.route.navigate(['/login'], { replaceUrl: true });
     }
   }
 }
