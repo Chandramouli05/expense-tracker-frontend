@@ -47,7 +47,7 @@ export class LoginComponent {
         this.successMsg.set('Login Successful');
         setTimeout(() => {
           this.success.set(false);
-          this.route.navigate(['/home'], { replaceUrl: true });
+          this.route.navigate(['/dashboard'], { replaceUrl: true });
         }, 2000);
       },
       error: (err) => {

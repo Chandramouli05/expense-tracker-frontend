@@ -1,2 +1,48 @@
-<h1 class="text-3xl p-5">Hi!👋,{{firstName()}}</h1>
-<button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" (click)="logout()">Logout</button>
+<!-- <h1 class="text-3xl p-5">Hi!👋,{{firstName()}}</h1>
+<button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" (click)="logout()">Logout</button> -->
+<div class="w-screen h-screen  cus-bg">
+    <div class="grid">
+        <div class="col p-3">
+            <div class="flex flex-row gap-10 items-center justify-between">
+                <div class="left-content flex gap-10 ">
+                    <div class="logo-holder">
+                        <img src="assets/images/logo.png" class="h-7 w-auto" alt="fintrack logo">
+                    </div>
+
+                    <div class="mid-content px-10">
+                        <div class="greet-message px-10">
+                            <p class="text-xl text-color-primary">Good Evening, <b
+                                    class="text-xl text-color-primary">Chandramouli S 👋</b></p>
+                        </div>
+                    </div>
+                </div>
+
+
+
+                <div class="flex items-center flex-row gap-4 px-4">
+                    <div class="w-full max-w-md">
+                        <div class="relative">
+                            <input type="text" placeholder="Search"
+                                class="w-100 rounded-lg border text-lg text-gray-500 border-gray-200 bg-white px-4 py-2 pl-10 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-200" />
+                            <svg class="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400"
+                                fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M21 21l-4.35-4.35M10.5 18a7.5 7.5 0 1 1 0-15 7.5 7.5 0 0 1 0 15z" />
+                            </svg>
+                        </div>
+                    </div>
+                    <div>
+                        <img src="assets/images/notifications.png" alt="notifications">
+                    </div>
+
+                    <div>
+                        <img src="assets/images/profile.png" alt="profile">
+                    </div>
+
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
