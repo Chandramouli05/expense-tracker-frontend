@@ -83,7 +83,7 @@
         </div>
 
         <div class="flex items-center justify-end text-sm">
-          <button (click)="openModal()" class="text-blue-600 hover:underline">
+          <button type="button" (click)="openModal()" class="text-blue-600 hover:underline">
             Forgot password?
           </button>
         </div>
@@ -128,7 +128,7 @@
 
 
 
-        <button (click)="onSubmit()"
+        <button (click)="onSubmit()" type="submit"
           class="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 transition">
           Login
         </button>
