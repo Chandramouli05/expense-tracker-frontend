@@ -15,7 +15,7 @@ import { Notifications } from './notifications/notifications';
 export const routes: Routes = [
   { path: '', component: LoginComponent },
 
-  { path: 'dashboard', component: Home, canActivate: [authGuard] },
+  { path: 'dashboard', component: Dashboard, canActivate: [authGuard] },
   { path: 'add-expense', component: AddExpenseComponent },
   { path: 'expenses', component: Expenses },
   { path: 'categories', component: Categories },

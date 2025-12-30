@@ -1,4 +1,4 @@
-import { Component, OnInit, signal } from '@angular/core';
+import { Component, computed, OnInit, signal } from '@angular/core';
 import { AuthService } from '../services/auth-service/auth-service';
 import { Router, RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
@@ -16,8 +16,8 @@ interface LoggedInUser {
   templateUrl: './home.html',
   styleUrl: './home.scss',
 })
-export class Home implements OnInit {
-  firstName = signal('');
+export class Home {
+  firstName = computed(() => this.authService.getUser().subscribe((value) => value.firstName));
   isSidebarOpen = signal(false);
 
   categories = [
@@ -83,23 +83,8 @@ export class Home implements OnInit {
     },
   ];
 
- 
-
-  constructor(private authService: AuthService, private route: Router) {}
-
-  ngOnInit(): void {
-    let firstName = JSON.parse(localStorage.getItem('firstName') ?? '""');
-    console.log(firstName);
-
-    this.authService.getUser().subscribe({
-      next: () => {
-        this.firstName.set(firstName!);
-      },
-      error: (err) => {
-        console.error('GET USER ERROR:', err);
-        console.log('user not authenticated');
-      },
-    });
+  constructor(private authService: AuthService, private route: Router) {
+    this.authService.getUser();
   }
 
   toggleSidebar() {

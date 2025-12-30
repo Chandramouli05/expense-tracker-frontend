@@ -1,44 +1,34 @@
-
-    <div class="grid">
-        <div class="col p-3">
-            <div class="flex flex-row gap-10 items-center justify-between">
-                <div class="left-content flex gap-7 ">
-                    <div class="logo-holder">
-                        <img src="assets/images/logo.png" class="h-7 w-auto mx-3" alt="fintrack logo">
-                    </div>
-
-                    <div class="mid-content px-10">
-                        <div class="greet-message px-10">
-                            <p class="text-xl text-color-primary">Good Evening, <b
-                                    class="text-xl text-color-primary">Chandramouli S 👋</b></p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="flex items-center flex-row gap-4 px-4">
-                    <div class="w-full max-w-md">
-                        <div class="relative">
-                            <input type="text" placeholder="Search"
-                                class="w-100 rounded-lg border  text-lg text-gray-500 border-gray-200 bg-white px-4 py-2 pl-10 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-200" />
-                            <svg class="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400"
-                                fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round"
-                                    d="M21 21l-4.35-4.35M10.5 18a7.5 7.5 0 1 1 0-15 7.5 7.5 0 0 1 0 15z" />
-                            </svg>
-                        </div>
-                    </div>
-
-                    <div class="bg-white rounded-full  p-3 h-11 w-13 flex items-center justify-center circle-cover">
-                        <img src="assets/images/icons/bell-top.svg" alt="notifications icon">
-                    </div>
-
-                    <div>
-                        <img src="assets/images/profile.png" alt="profile" >
-                    </div>
-
-                </div>
-            </div>
-
-        </div>
+<header class="bg-[#F8FAFC] px-4 md:px-8 py-4 flex items-center justify-between gap-4">
+    <div class="flex items-center gap-4">
+        <button (click)="toggleSidebar()" class="lg:hidden p-2 text-slate-600 hover:bg-slate-100 rounded-lg">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+        </button>
+        <h2 class="text-xl text-slate-900 hidden sm:block">
+            {{period()}} <span class="font-bold">{{firstName()}} 👋</span>
+        </h2>
     </div>
 
+    <div class="flex items-center gap-3 md:gap-6 flex-1 justify-end">
+        <div class="relative w-full max-w-md hidden md:block">
+            <input type="text" placeholder="Search"
+                class="w-full bg-white rounded-xl border-none shadow-sm px-4 py-2.5 pl-10 text-sm focus:ring-2 focus:ring-blue-500 transition-all">
+            <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" fill="none"
+                stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+        </div>
+
+        <button class="p-2.5 bg-white rounded-xl shadow-sm text-slate-600 hover:text-blue-600 transition-colors">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+            </svg>
+        </button>
+
+        <img src="assets/images/profile.png" alt="Profile"
+            class="w-10 h-10 rounded-3xl object-cover border-2 border-white shadow-sm">
+    </div>
+</header>

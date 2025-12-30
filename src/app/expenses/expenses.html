@@ -1,123 +1,13 @@
 <div class="min-h-screen bg-[#F8FAFC] flex">
     <!-- Sidebar -->
-    <aside
-        class="fixed inset-y-0 left-0 w-64 bg-white  border-r border-gray-200 z-50 transform lg:translate-x-0 lg:static transition-transform duration-300 ease-in-out shrink-0"
-        [class.-translate-x-full]="!isSidebarOpen()">
-        <div class="p-6 flex items-center justify-between ">
-            <img src="assets/images/logo.png" alt="logo">
-
-             <!-- side nav close button -->
-            <button data-ripple-dark="true" data-dialog-close="true"
-                class="lg:hidden bg-blue-50 relative h-8 max-h-[32px] w-8 max-w-[32px] select-none rounded-lg text-center align-middle font-sans text-xs font-medium uppercase text-blue-gray-500 transition-all hover:bg-blue-gray-500/10 active:bg-blue-gray-500/30 disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
-                type="button" (click)="toggleSidebar()">
-                <span class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 transform">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"
-                        stroke-width="2" class="h-5 w-5">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path>
-                    </svg>
-                </span>
-            </button>
-        </div>
+    <app-side-navigation></app-side-navigation>
 
 
-
-        <nav class="flex flex-col h-[calc(100%-88px)] p-4 gap-1">
-            <a class="sidebar-link " routerLink="/dashboard">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
-                </svg>
-                Dashboard
-            </a>
-            <a class="sidebar-link active" routerLink="/expenses">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-                Expenses
-            </a>
-            <a class="sidebar-link" routerLink="/categories">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z" />
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z" />
-                </svg>
-                Categories
-            </a>
-            <a class="sidebar-link" routerLink="/budgets">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.246.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-                </svg>
-                Budgets
-            </a>
-            <a class="sidebar-link" routerLink="/reports">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                </svg>
-                Reports
-            </a>
-            <a class="sidebar-link" routerLink="/notifications">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
-                </svg>
-                Notifications
-            </a>
-
-
-            <a class="sidebar-link text-slate-500" (click)="logout()">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-                </svg>
-                SignOut
-            </a>
-
-        </nav>
-    </aside>
 
     <!-- Main Content Wrapper -->
     <div class="flex-1 flex flex-col min-w-0 overflow-hidden">
         <!-- Header -->
-        <header class="bg-[#F8FAFC] px-4 md:px-8 py-4 flex items-center justify-between gap-4">
-            <div class="flex items-center gap-4">
-                <button (click)="toggleSidebar()" class="lg:hidden p-2 text-slate-600 hover:bg-slate-100 rounded-lg">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M4 6h16M4 12h16M4 18h16" />
-                    </svg>
-                </button>
-                <h2 class="text-xl text-slate-900 hidden sm:block">
-                    Good Evening, <span class="font-bold">Chandramouli 👋</span>
-                </h2>
-            </div>
-
-            <div class="flex items-center gap-3 md:gap-6 flex-1 justify-end">
-                <div class="relative w-full max-w-md hidden md:block">
-                    <input type="text" placeholder="Search"
-                        class="w-full bg-white rounded-xl border-none shadow-sm px-4 py-2.5 pl-10 text-sm focus:ring-2 focus:ring-blue-500 transition-all">
-                    <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" fill="none"
-                        stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                    </svg>
-                </div>
-
-                <button
-                    class="p-2.5 bg-white rounded-xl shadow-sm text-slate-600 hover:text-blue-600 transition-colors">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
-                    </svg>
-                </button>
-
-                <img src="assets/images/profile.png" alt="Profile"
-                    class="w-10 h-10 rounded-3xl object-cover border-2 border-white shadow-sm">
-            </div>
-        </header>
+        <app-header></app-header>
 
         <!-- Scrollable Content -->
         <main class="flex-1 overflow-y-auto p-4 md:p-8 pt-0">
