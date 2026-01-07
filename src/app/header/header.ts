@@ -11,10 +11,10 @@ import { RouterLink } from '@angular/router';
   templateUrl: './header.html',
   styleUrl: './header.scss',
 })
-export class Header {
+export class Header implements OnInit {
   firstName = computed(() => this.authService.user()?.firstName);
   period = signal('');
-
+  profileLetter = signal('');
   isSidebarOpen = signal(false);
 
   constructor(private authService: AuthService, public sideBar: SidebarService) {
@@ -24,6 +24,13 @@ export class Header {
       this.authService.getUser().subscribe();
       this.getTimeOfDayMessage();
     });
+  }
+  ngOnInit(): void {
+    this.authService.getUser().subscribe((data)=> {
+       let name = data.firstName;
+       let profileName = name.toUpperCase().charAt(0);
+        this.profileLetter.set(profileName)
+      })
   }
 
   toggleSidebar() {
