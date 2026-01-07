@@ -1,24 +1,24 @@
-import { Component } from '@angular/core';
+import { Component, inject, OnInit, signal, WritableSignal } from '@angular/core';
 import { Header } from '../header/header';
 import { SideNavigation } from '../side-navigation/side-navigation';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
+import { CategoryService } from '../services/category-service';
+import { Category } from '../models/categories.model';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-dashboard',
-  imports: [Header, SideNavigation, CommonModule, RouterLink],
+  imports: [Header, SideNavigation, CommonModule, RouterLink, ReactiveFormsModule],
   standalone: true,
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.scss',
 })
-export class Dashboard {
-  categories = [
-    { name: 'Food', icon: '🍎' },
-    { name: 'Rent', icon: '🏠' },
-    { name: 'Transport', icon: '🚗' },
-    { name: 'Shopping', icon: '🛍️' },
-    { name: 'Entertainment', icon: '📚' },
-  ];
+export class Dashboard implements OnInit {
+  categoryForm!: FormGroup;
+
+  isCategoryModalOpen = false;
+  isExpenseModalOpen = false;
 
   emiReminders = [
     {
@@ -74,4 +74,49 @@ export class Dashboard {
       statusColor: 'text-emerald-500',
     },
   ];
+
+  constructor(private fb: FormBuilder) {
+    this.categoryForm = this.fb.group({
+      name: ['', [Validators.required]],
+      icon: ['', [Validators.required]],
+    });
+  }
+
+  private categoryService = inject(CategoryService);
+
+  categories = this.categoryService.category;
+
+  ngOnInit() {
+    this.categoryService.getCategories().subscribe();
+  }
+
+  addCategory() {
+    this.categoryService.postCategories(this.categoryForm.value).subscribe({
+      next: () => {
+        this.categoryForm.reset();
+        this.closeCategoryModal();
+      },
+      error: (err) => console.error(err),
+    });
+  }
+
+  openCategoryModal() {
+    this.isCategoryModalOpen = true;
+    document.body.style.overflow = 'hidden';
+  }
+
+  closeCategoryModal() {
+    this.isCategoryModalOpen = false;
+    document.body.style.overflow = 'auto';
+  }
+
+  openExpenseModal() {
+    this.isExpenseModalOpen = true;
+    document.body.style.overflow = 'hidden';
+  }
+
+  closeExpenseModal() {
+    this.isExpenseModalOpen = false;
+    document.body.style.overflow = 'auto';
+  }
 }

@@ -1,1 +1,62 @@
-<p>categories works!</p>
+<div class="min-h-screen bg-[#F8FAFC] flex">
+    <!-- Sidebar -->
+    <app-side-navigation></app-side-navigation>
+
+    <!-- Main Content Wrapper -->
+    <div class="flex-1 flex flex-col min-w-0 overflow-hidden">
+        <!-- Header -->
+        <app-header></app-header>
+
+        <!-- Scrollable Content -->
+        <main class="flex-1 overflow-y-auto p-4 md:p-8 pt-0">
+            <div class="max-w-[1400px] mx-auto space-y-8">
+                <!-- Dashboard Hero -->
+                <div class="bg-white rounded-[2rem] p-6 md:p-10 shadow-sm border border-slate-100">
+                    <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-10">
+                        <div>
+                            <h3 class="text-3xl font-semibold text-slate-900 mb-1">Categories</h3>
+                            <p class="text-slate-500">Manage your categories</p>
+                        </div>
+
+                    </div>
+
+                    <div class="space-y-10">
+
+                        <!-- Last Month Activities -->
+                        <section class="bg-white rounded-2xl border border-slate-100 p-6">
+                            <div class="flex items-center justify-between mb-8">
+                                <div>
+                                    <h4 class="text-xl font-semibold text-slate-400">Categories List</h4>                                </div>
+                            </div>
+
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-left">
+                                    <thead>
+                                        <tr class="text-xs font-medium text-slate-300 uppercase tracking-wider">
+                                            <th class="pb-4 pr-4">Categories Names</th>
+                                            <th class="pb-4 px-4 text-center">Transactions</th>
+                                            <th class="pb-4 px-4 text-center">Date</th>
+                                            <th class="pb-4 pl-4 text-right">Amount</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="divide-y divide-slate-50">
+                                        <tr *ngFor="let act of activities"
+                                            class="group hover:bg-slate-50 transition-colors">
+                                            <td class="py-6 pr-4 font-bold text-slate-800">{{ act.name }}</td>
+                                            <td class="py-6 px-4 text-center font-semibold" [class]="act.statusColor">{{
+                                                act.status }}</td>
+                                            <td class="py-6 px-4 text-center text-slate-800 font-medium">{{ act.date }}
+                                            </td>
+                                            <td class="py-6 pl-4 text-right font-bold text-slate-800">{{ act.amount }}
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </section>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
