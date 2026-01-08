@@ -10,12 +10,84 @@
         <!-- Scrollable Content -->
         <main class="flex-1 overflow-y-auto p-4 md:p-8 pt-0">
             <div class="max-w-[1400px] mx-auto space-y-8">
+                <!--Add Categories Modal-->
+                @if(isCategoryModalOpen){
+                <div class="fixed inset-0 z-50 h-screen flex items-center justify-center bg-black/50 ">
+
+                    <div
+                        class="bg-white w-[90%] sm:w-[85%] md:w-full max-w-sm md:max-w-md  rounded-2xl shadow-xl p-4 sm:p-6 relative animate-scaleIn ">
+                        <!-- Close Button -->
+                        <button class="absolute top-4 right-4 text-slate-400 hover:text-slate-600"
+                            (click)="closeCategoryModal()">
+                            ✕
+                        </button>
+
+                        <!-- Modal Header -->
+                        <h3 class="text-xl font-semibold text-slate-900 mb-6">
+                            Add New Category
+                        </h3>
+
+                        <!-- Form -->
+                        <form class="space-y-4" [formGroup]="categoryForm">
+                            <div>
+                                <label class="block text-sm font-medium text-slate-600 mb-1">
+                                    Category Name
+                                </label>
+                                <input type="text" placeholder="e.g. Food, Travel" formControlName="name"
+                                    class="w-full px-4 py-2 border border-gray-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 border-slate-200" />
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-medium text-slate-600 mb-1">
+                                    Icon
+                                </label>
+                                <input type="text" placeholder="🍔 ✈️ 🏠" formControlName="icon"
+                                    class="w-full px-4 py-2 border border-gray-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 border-slate-200" />
+                            </div>
+
+                                                        <div>
+                                <label class="block text-sm font-medium text-slate-600 mb-1">
+                                    Date
+                                </label>
+                                <input type="date" formControlName="date"
+                                    class="w-full px-4 py-2 border border-gray-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 border-slate-200" />
+                            </div>
+
+                            
+
+                            <!-- Actions -->
+                            <div class="flex justify-end gap-3 pt-4">
+                                <button type="button"
+                                    class="px-4 py-2 rounded-lg bg-slate-100 hover:bg-slate-200 font-medium"
+                                    (click)="closeCategoryModal()">
+                                    Cancel
+                                </button>
+                                <button type="submit" (click)="addCategory()"
+                                    class="px-4 py-2 rounded-lg bg-blue-600 text-white font-semibold hover:bg-blue-700">
+                                    Add
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                }
                 <!-- Dashboard Hero -->
                 <div class="bg-white rounded-[2rem] p-6 md:p-10 shadow-sm border border-slate-100">
                     <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-10">
                         <div>
                             <h3 class="text-3xl font-semibold text-slate-900 mb-1">Categories</h3>
                             <p class="text-slate-500">Manage your categories</p>
+                        </div>
+                        <div class="flex gap-3">
+                            <!-- <button
+                                class="px-6 py-2.5 border cus-btn-primary rounded-lg font-semibold  transition-colors">
+                                Add Categories
+                            </button> -->
+                            <button
+                                class="px-6 py-2.5 cus-btn-secondary text-white rounded-lg font-semibold  transition-colors"
+                                (click)="openCategoryModal()">
+                                Add Categories
+                            </button>
                         </div>
 
                     </div>
@@ -26,28 +98,42 @@
                         <section class="bg-white rounded-2xl border border-slate-100 p-6">
                             <div class="flex items-center justify-between mb-8">
                                 <div>
-                                    <h4 class="text-xl font-semibold text-slate-400">Categories List</h4>                                </div>
+                                    <h4 class="text-xl font-semibold text-slate-400">Categories List</h4>
+                                </div>
                             </div>
 
                             <div class="overflow-x-auto">
                                 <table class="w-full text-left">
                                     <thead>
                                         <tr class="text-xs font-medium text-slate-300 uppercase tracking-wider">
-                                            <th class="pb-4 pr-4">Categories Names</th>
-                                            <th class="pb-4 px-4 text-center">Transactions</th>
-                                            <th class="pb-4 px-4 text-center">Date</th>
-                                            <th class="pb-4 pl-4 text-right">Amount</th>
+                                            <th class="pb-4 pr-4">S.No</th>
+                                            <th class="pb-4 px-4 ">Date</th>
+                                            <th class="pb-4 pr-4">Category Name</th>
+                                            <th class="pb-4 px-4">Actions</th>
                                         </tr>
                                     </thead>
                                     <tbody class="divide-y divide-slate-50">
-                                        <tr *ngFor="let act of activities"
+                                        <tr *ngFor="let act of categories() let i=index"
                                             class="group hover:bg-slate-50 transition-colors">
-                                            <td class="py-6 pr-4 font-bold text-slate-800">{{ act.name }}</td>
-                                            <td class="py-6 px-4 text-center font-semibold" [class]="act.statusColor">{{
-                                                act.status }}</td>
-                                            <td class="py-6 px-4 text-center text-slate-800 font-medium">{{ act.date }}
-                                            </td>
-                                            <td class="py-6 pl-4 text-right font-bold text-slate-800">{{ act.amount }}
+                                            <td class="py-6 pr-4 font-semibold text-slate-800">{{ i+1 }}</td>
+                                            <td class="py-6 px-4 font-semibold">{{act.date | date:'dd MMM yyyy'}}</td>
+                                            <td class="py-6 pr-4 font-semibold text-slate-800">{{ act.name }}
+                                                {{act.icon}}</td>
+
+
+                                            <td class="py-6font-bold text-slate-800">
+                                                <div class="flex gap-3 m-0">
+                                                    <button
+                                                        class="px-3 py-1 cus-btn-primary text-white rounded-lg font-semibold  transition-colors"
+                                                        (click)="openCategoryModal()">
+                                                        Edit
+                                                    </button>
+                                                    <button
+                                                        class="px-4 py-1 cus-btn-secondary text-white rounded-lg font-semibold  transition-colors"
+                                                        (click)="deleteCategory(act._id)">
+                                                        Delete
+                                                    </button>
+                                                </div>
                                             </td>
                                         </tr>
                                     </tbody>

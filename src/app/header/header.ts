@@ -11,11 +11,36 @@ import { RouterLink } from '@angular/router';
   templateUrl: './header.html',
   styleUrl: './header.scss',
 })
-export class Header implements OnInit {
+export class Header {
   firstName = computed(() => this.authService.user()?.firstName);
   period = signal('');
-  profileLetter = signal('');
+  profileLetter = computed(() => {
+    const name = this.firstName();
+    return name ? name.charAt(0).toUpperCase() : '';
+  });
   isSidebarOpen = signal(false);
+
+  profileBgColor = computed(() => {
+    const colors = [
+      'bg-red-600',
+      'bg-blue-600',
+      'bg-green-600',
+      'bg-purple-600',
+      'bg-pink-600',
+      'bg-indigo-600',
+      'bg-emerald-600',
+      'bg-orange-500',
+    ];
+
+    const name = this.firstName();
+    if (!name) return 'bg-gray-400';
+
+    let hash = 0;
+    for (let i = 0; i < name.length; i++) {
+      hash = name.charCodeAt(i) + ((hash << 5) - hash);
+    }
+    return colors[Math.abs(hash) % colors.length];
+  });
 
   constructor(private authService: AuthService, public sideBar: SidebarService) {
     this.authService.getUser();
@@ -24,13 +49,6 @@ export class Header implements OnInit {
       this.authService.getUser().subscribe();
       this.getTimeOfDayMessage();
     });
-  }
-  ngOnInit(): void {
-    this.authService.getUser().subscribe((data)=> {
-       let name = data.firstName;
-       let profileName = name.toUpperCase().charAt(0);
-        this.profileLetter.set(profileName)
-      })
   }
 
   toggleSidebar() {

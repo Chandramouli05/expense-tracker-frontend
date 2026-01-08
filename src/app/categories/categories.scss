@@ -1,0 +1,56 @@
+.text-color-primary {
+  color: #0e2756;
+}
+
+.bg-btnColor:hover {
+  background-color: #f2f8ff;
+  color: #0e2756;
+  width: 100%;
+}
+
+.bg-btnColor:visited {
+  background-color: #f2f8ff;
+  color: #0e2756;
+  width: 100%;
+}
+
+.cus-bg {
+  background-color: #dfe2eb;
+}
+.NotificationIcon {
+  width: 52px;
+  height: 52px;
+}
+
+.circle-cover:hover {
+  border: solid 1px #4581ef96;
+  box-shadow: 0px 4px 10px #4581ef54;
+}
+
+.cus-btn-primary {
+  border: 1.5px solid #284374;
+  color: #284374;
+  font-weight: 500;
+  border-radius: 8px;
+}
+
+.cus-btn-primary:hover {
+  background-color: #284374;
+  color: #ffffff;
+  font-weight: 500;
+  border-radius: 8px;
+}
+
+.cus-btn-secondary {
+  background-color: #284374;
+  color: #ffffff;
+  font-weight: 500;
+  border-radius: 8px;
+}
+
+.cus-btn-secondary:hover {
+  background-color: #2f569f;
+  color: #ffffff;
+  font-weight: 500;
+  border-radius: 8px;
+}

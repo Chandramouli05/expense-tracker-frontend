@@ -24,9 +24,17 @@ export class CategoryService {
   }
 
   postCategories(category: Category) {
-    return this.http.post<{ name: string; icon: string }>(`${this.apiLink}`, category).pipe(
+    return this.http.post<Category>(`${this.apiLink}`, category).pipe(
       tap((newCategory) => {
         this.categoriesSignal.update((prev) => [...prev, newCategory]);
+      })
+    );
+  }
+
+  deleteCategories(_id: string) {
+    return this.http.delete<{ message: string; _id: string }>(`${this.apiLink}/${_id}`).pipe(
+      tap(() => {
+        this.categoriesSignal.update((prev) => prev.filter((cat) => cat._id !== _id));
       })
     );
   }

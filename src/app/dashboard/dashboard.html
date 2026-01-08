@@ -141,7 +141,7 @@
                             <h3 class="text-3xl font-semibold text-slate-900 mb-1">Dashboard</h3>
                             <p class="text-slate-500">Here's a snapshot of your finances</p>
                         </div>
-                        <div class="flex gap-3">
+                        <!-- <div class="flex gap-3">
                             <button
                                 class="px-6 py-2.5 border cus-btn-primary rounded-lg font-semibold  transition-colors"
                                 (click)="openCategoryModal()">
@@ -152,13 +152,17 @@
                                 (click)="openExpenseModal()">
                                 Add Expense
                             </button>
-                        </div>
+                        </div> -->
                     </div>
 
                     <div class="space-y-10">
                         <!-- Financial Summary -->
                         <section>
-                            <h4 class="text-xl font-semibold text-slate-400 mb-6">Financial Summary</h4>
+
+                          <div class="flex items-center justify-between mb-6">
+                                        <h4 class="text-xl font-semibold text-slate-400">Financial Summary</h4>
+                                        <button class="text-blue-600 font-semibold hover:underline" [routerLink]="['/categories']">Check here</button>
+                                    </div>
                             <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6">
                                 <!-- Total Balance -->
                                 <div
@@ -233,7 +237,7 @@
                                 <div class="bg-white rounded-2xl border border-slate-100 p-6">
                                     <div class="flex items-center justify-between mb-6">
                                         <h4 class="text-xl font-semibold text-slate-400">EMI Reminders</h4>
-                                        <button class="text-blue-600 font-semibold hover:underline">View All</button>
+                                        <button class="text-blue-600 font-semibold hover:underline" routerLink="/emi-management">View All</button>
                                     </div>
                                     <div class="space-y-5">
                                         <div *ngFor="let emi of emiReminders"

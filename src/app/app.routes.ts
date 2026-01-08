@@ -8,7 +8,7 @@ import { authGuard } from './auth-guard';
 import { Dashboard } from './dashboard/dashboard';
 import { Categories } from './categories/categories';
 import { Budgets } from './budgets/budgets';
-import { Reports } from './reports/reports';
+import { Reports } from './emi-management/reports';
 import { Expenses } from './expenses/expenses';
 import { Notifications } from './notifications/notifications';
 
@@ -20,7 +20,7 @@ export const routes: Routes = [
   { path: 'expenses', component: Expenses },
   { path: 'categories', component: Categories },
   { path: 'budgets', component: Budgets },
-  { path: 'reports', component: Reports },
+  { path: 'emi-management', component: Reports },
   { path: 'notifications', component: Notifications },
 
   { path: 'login', component: LoginComponent },
