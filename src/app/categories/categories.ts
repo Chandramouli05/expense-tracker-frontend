@@ -15,36 +15,17 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
   styleUrl: './categories.scss',
 })
 export class Categories implements OnInit {
-  isSidebarOpen = signal(false);
   categoryForm!: FormGroup;
+
+  selectedCategoryId!: string;
+
+  isSidebarOpen = signal(false);
+  isEditModalOpen = false;
   isCategoryModalOpen = false;
-  activities = [
-    {
-      name: 'Home Electricity Bill',
-      status: 'Successful',
-      date: '27 / 10 / 2025',
-      amount: '₹450',
-      statusColor: 'text-emerald-500',
-    },
-    {
-      name: 'Festival Shopping',
-      status: 'Pending',
-      date: '27 / 10 / 2025',
-      amount: '₹450',
-      statusColor: 'text-yellow-500',
-    },
-    {
-      name: 'Car Services',
-      status: 'Successful',
-      date: '27 / 10 / 2025',
-      amount: '₹450',
-      statusColor: 'text-emerald-500',
-    },
-  ];
 
   constructor(private fb: FormBuilder) {
     this.categoryForm = this.fb.group({
-      date: ['',[Validators.required]],
+      date: ['', [Validators.required]],
       name: ['', [Validators.required]],
       icon: ['', [Validators.required]],
     });
@@ -59,7 +40,8 @@ export class Categories implements OnInit {
   }
 
   addCategory() {
-    console.log(this.categoryForm.value)
+    if (this.categoryForm.invalid) return;
+
     this.categoryService.postCategories(this.categoryForm.value).subscribe({
       next: () => {
         this.categoryForm.reset();
@@ -69,18 +51,47 @@ export class Categories implements OnInit {
     });
   }
 
-  deleteCategory(id:string){
-    if(!confirm('Are you sure?')) return;
+  deleteCategory(id: string) {
+    if (!confirm('Are you sure?')) return;
     this.categoryService.deleteCategories(id).subscribe();
-    
   }
+
   openCategoryModal() {
     this.isCategoryModalOpen = true;
     document.body.style.overflow = 'hidden';
   }
 
   closeCategoryModal() {
+    this.categoryForm.reset();
     this.isCategoryModalOpen = false;
+    this.isEditModalOpen = false;
     document.body.style.overflow = 'auto';
+  }
+
+  openEditModal(category: Category) {
+    this.selectedCategoryId = category._id;
+    this.isEditModalOpen = true;
+
+    this.categoryForm.patchValue({
+      name: category.name,
+      icon: category.icon,
+      date: category.date,
+    });
+
+    document.body.style.overflow = 'hidden';
+  }
+
+  updateCategory() {
+    this.categoryService
+      .updateCategories(this.selectedCategoryId, this.categoryForm.value)
+      .subscribe({
+        next: () => {
+          this.categoryForm.reset();
+          this.closeCategoryModal();
+        },
+        error: (err) => console.error(err),
+      });
+
+    this.categoryService.getCategories().subscribe();
   }
 }

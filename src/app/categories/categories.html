@@ -45,7 +45,7 @@
                                     class="w-full px-4 py-2 border border-gray-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 border-slate-200" />
                             </div>
 
-                                                        <div>
+                            <div>
                                 <label class="block text-sm font-medium text-slate-600 mb-1">
                                     Date
                                 </label>
@@ -53,7 +53,7 @@
                                     class="w-full px-4 py-2 border border-gray-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 border-slate-200" />
                             </div>
 
-                            
+
 
                             <!-- Actions -->
                             <div class="flex justify-end gap-3 pt-4">
@@ -71,6 +71,69 @@
                     </div>
                 </div>
                 }
+
+                <!--Edit Categories Modal-->
+                @if(isEditModalOpen){
+                <div class="fixed inset-0 z-50 h-screen flex items-center justify-center bg-black/50 ">
+
+                    <div
+                        class="bg-white w-[90%] sm:w-[85%] md:w-full max-w-sm md:max-w-md  rounded-2xl shadow-xl p-4 sm:p-6 relative animate-scaleIn ">
+                        <!-- Close Button -->
+                        <button class="absolute top-4 right-4 text-slate-400 hover:text-slate-600"
+                            (click)="closeCategoryModal()">
+                            ✕
+                        </button>
+
+                        <!-- Modal Header -->
+                        <h3 class="text-xl font-semibold text-slate-900 mb-6">
+                            Edit Category
+                        </h3>
+
+                        <!-- Form -->
+                        <form class="space-y-4" [formGroup]="categoryForm">
+                            <div>
+                                <label class="block text-sm font-medium text-slate-600 mb-1">
+                                    Category Name
+                                </label>
+                                <input type="text" placeholder="e.g. Food, Travel" formControlName="name"
+                                    class="w-full px-4 py-2 border border-gray-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 border-slate-200" />
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-medium text-slate-600 mb-1">
+                                    Icon
+                                </label>
+                                <input type="text" placeholder="🍔 ✈️ 🏠" formControlName="icon"
+                                    class="w-full px-4 py-2 border border-gray-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 border-slate-200" />
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-medium text-slate-600 mb-1">
+                                    Date
+                                </label>
+                                <input type="date" formControlName="date"
+                                    class="w-full px-4 py-2 border border-gray-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 border-slate-200" />
+                            </div>
+
+
+
+                            <!-- Actions -->
+                            <div class="flex justify-end gap-3 pt-4">
+                                <button type="button"
+                                    class="px-4 py-2 rounded-lg bg-slate-100 hover:bg-slate-200 font-medium"
+                                    (click)="closeCategoryModal()">
+                                    Cancel
+                                </button>
+                                <button type="submit" (click)="updateCategory()"
+                                    class="px-4 py-2 rounded-lg bg-blue-600 text-white font-semibold hover:bg-blue-700">
+                                    Update
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                }
+
                 <!-- Dashboard Hero -->
                 <div class="bg-white rounded-[2rem] p-6 md:p-10 shadow-sm border border-slate-100">
                     <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-10">
@@ -79,10 +142,6 @@
                             <p class="text-slate-500">Manage your categories</p>
                         </div>
                         <div class="flex gap-3">
-                            <!-- <button
-                                class="px-6 py-2.5 border cus-btn-primary rounded-lg font-semibold  transition-colors">
-                                Add Categories
-                            </button> -->
                             <button
                                 class="px-6 py-2.5 cus-btn-secondary text-white rounded-lg font-semibold  transition-colors"
                                 (click)="openCategoryModal()">
@@ -105,7 +164,7 @@
                             <div class="overflow-x-auto">
                                 <table class="w-full text-left">
                                     <thead>
-                                        <tr class="text-xs font-medium text-slate-300 uppercase tracking-wider">
+                                        <tr class="text-xs font-medium text-slate-500 uppercase  tracking-wider">
                                             <th class="pb-4 pr-4">S.No</th>
                                             <th class="pb-4 px-4 ">Date</th>
                                             <th class="pb-4 pr-4">Category Name</th>
@@ -125,7 +184,7 @@
                                                 <div class="flex gap-3 m-0">
                                                     <button
                                                         class="px-3 py-1 cus-btn-primary text-white rounded-lg font-semibold  transition-colors"
-                                                        (click)="openCategoryModal()">
+                                                        (click)="openEditModal(act)">
                                                         Edit
                                                     </button>
                                                     <button

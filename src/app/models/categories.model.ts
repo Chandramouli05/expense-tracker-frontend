@@ -3,5 +3,7 @@ export interface Category {
   name: string;
   date:string;
   icon: string;
+  userId: string;
   createdAt: string;
+  updatedAt: string;
 }
