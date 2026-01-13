@@ -37,6 +37,7 @@ export class Categories implements OnInit {
 
   ngOnInit() {
     this.categoryService.getCategories().subscribe();
+    this.updateCategory();
   }
 
   addCategory() {
