@@ -78,7 +78,7 @@ export class Categories implements OnInit {
       icon: category.icon,
       date: category.date,
     });
-
+    
     document.body.style.overflow = 'hidden';
   }
 

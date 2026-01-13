@@ -172,8 +172,9 @@
                                         </tr>
                                     </thead>
                                     <tbody class="divide-y divide-slate-50">
-                                        <tr *ngFor="let act of categories() let i=index"
-                                            class="group hover:bg-slate-50 transition-colors">
+                                        @for(act of categories(); track act._id; let i = $index){
+                                        <tr class="group hover:bg-slate-50 transition-colors">
+
                                             <td class="py-6 pr-4 font-semibold text-slate-800">{{ i+1 }}</td>
                                             <td class="py-6 px-4 font-semibold">{{act.date | date:'dd MMM yyyy'}}</td>
                                             <td class="py-6 pr-4 font-semibold text-slate-800">{{ act.name }}
@@ -194,7 +195,9 @@
                                                     </button>
                                                 </div>
                                             </td>
+
                                         </tr>
+                                        }
                                     </tbody>
                                 </table>
                             </div>

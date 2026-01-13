@@ -159,10 +159,11 @@
                         <!-- Financial Summary -->
                         <section>
 
-                          <div class="flex items-center justify-between mb-6">
-                                        <h4 class="text-xl font-semibold text-slate-400">Financial Summary</h4>
-                                        <button class="text-blue-600 font-semibold hover:underline" [routerLink]="['/categories']">View All</button>
-                                    </div>
+                            <div class="flex items-center justify-between mb-6">
+                                <h4 class="text-xl font-semibold text-slate-400">Financial Summary</h4>
+                                <button class="text-blue-600 font-semibold hover:underline"
+                                    [routerLink]="['/categories']">View All</button>
+                            </div>
                             <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6">
                                 <!-- Total Balance -->
                                 <div
@@ -220,9 +221,10 @@
                             <div class="grid grid-cols-1 lg:grid-cols-1 md:grid-cols-2 gap-6  xl:grid-cols-2 gap-3">
                                 <!-- Categories Card -->
                                 <div class="bg-white rounded-2xl border border-slate-100 p-6">
-                                     <div class="flex items-center justify-between mb-6">
+                                    <div class="flex items-center justify-between mb-6">
                                         <h4 class="text-xl font-semibold text-slate-400">Categories</h4>
-                                        <button class="text-blue-600 font-semibold hover:underline" [routerLink]="['/categories']">View All</button>
+                                        <button class="text-blue-600 font-semibold hover:underline"
+                                            [routerLink]="['/categories']">View All</button>
                                     </div>
                                     <ul class="space-y-5">
                                         <li *ngFor="let cat of categories() | slice:0:5"
@@ -237,23 +239,29 @@
                                 <div class="bg-white rounded-2xl border border-slate-100 p-6">
                                     <div class="flex items-center justify-between mb-6">
                                         <h4 class="text-xl font-semibold text-slate-400">EMI Reminders</h4>
-                                        <button class="text-blue-600 font-semibold hover:underline" routerLink="/emi-management">View All</button>
+                                        <button class="text-blue-600 font-semibold hover:underline"
+                                            routerLink="/emi-management">View All</button>
                                     </div>
                                     <div class="space-y-5">
-                                        <div *ngFor="let emi of emiReminders"
+                                        <div *ngFor="let emi of emiList() | slice:0:4"
                                             class="flex items-center justify-between gap-4">
                                             <div class="flex-1 min-w-0">
                                                 <div class="flex items-center gap-2 mb-1">
-                                                    <span
-                                                        [class]="'px-2 py-0.5 rounded text-[10px] font-bold uppercase ' + emi.statusColor">{{
-                                                        emi.status }}</span>
+                                                    @let status = getEMIstatus(emi.date);
+                                                    @if(status){
+                                                    <span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase"
+                                                        [ngClass]="status.class">{{
+                                                        status.text }}</span>
+                                                    }
                                                     <p class="text-sm font-bold text-slate-800 truncate">{{ emi.name
                                                         }}
                                                     </p>
                                                 </div>
-                                                <p class="text-xs text-slate-400">{{ emi.date }}</p>
+                                                <p class="text-xs text-slate-400">{{ emi.date | date:'dd MMM
+                                                    yyyy' }}</p>
                                             </div>
-                                            <p class="text-sm font-bold text-slate-800 shrink-0">{{ emi.amount }}
+                                            <p class="text-sm font-bold text-slate-800 shrink-0">{{ emi.amount |
+                                                currency:'INR' }}
                                             </p>
                                         </div>
                                     </div>

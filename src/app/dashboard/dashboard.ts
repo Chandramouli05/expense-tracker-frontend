@@ -6,6 +6,7 @@ import { RouterLink } from '@angular/router';
 import { CategoryService } from '../services/category-service';
 import { Category } from '../models/categories.model';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { EMIService } from '../services/emi-service';
 
 @Component({
   selector: 'app-dashboard',
@@ -20,36 +21,36 @@ export class Dashboard implements OnInit {
   isCategoryModalOpen = false;
   isExpenseModalOpen = false;
 
-  emiReminders = [
-    {
-      name: 'ICICI personal loan EMI',
-      date: '5th Jan 2026',
-      amount: '₹12,500',
-      status: 'Upcoming',
-      statusColor: 'bg-emerald-100 text-emerald-700',
-    },
-    {
-      name: 'BIKE loan EMI',
-      date: '27th Dec 2025',
-      amount: '₹10,500',
-      status: 'Due Soon',
-      statusColor: 'bg-yellow-100 text-yellow-700',
-    },
-    {
-      name: 'Credit Card EMI',
-      date: '22nd Dec 2025',
-      amount: '₹5000',
-      status: 'Overdue',
-      statusColor: 'bg-red-100 text-red-700',
-    },
-    {
-      name: 'Phone EMI',
-      date: '27th Dec 2025',
-      amount: '₹2,500',
-      status: 'Due Soon',
-      statusColor: 'bg-yellow-100 text-yellow-700',
-    },
-  ];
+  // emiReminders = [
+  //   {
+  //     name: 'ICICI personal loan EMI',
+  //     date: '5th Jan 2026',
+  //     amount: '₹12,500',
+  //     status: 'Upcoming',
+  //     statusColor: 'bg-emerald-100 text-emerald-700',
+  //   },
+  //   {
+  //     name: 'BIKE loan EMI',
+  //     date: '27th Dec 2025',
+  //     amount: '₹10,500',
+  //     status: 'Due Soon',
+  //     statusColor: 'bg-yellow-100 text-yellow-700',
+  //   },
+  //   {
+  //     name: 'Credit Card EMI',
+  //     date: '22nd Dec 2025',
+  //     amount: '₹5000',
+  //     status: 'Overdue',
+  //     statusColor: 'bg-red-100 text-red-700',
+  //   },
+  //   {
+  //     name: 'Phone EMI',
+  //     date: '27th Dec 2025',
+  //     amount: '₹2,500',
+  //     status: 'Due Soon',
+  //     statusColor: 'bg-yellow-100 text-yellow-700',
+  //   },
+  // ];
 
   activities = [
     {
@@ -83,11 +84,14 @@ export class Dashboard implements OnInit {
   }
 
   private categoryService = inject(CategoryService);
+  private emiService = inject(EMIService);
 
   categories = this.categoryService.category;
+  emiList = this.emiService.emi;
 
   ngOnInit() {
     this.categoryService.getCategories().subscribe();
+    this.emiService.getEMI().subscribe();
   }
 
   addCategory() {
@@ -118,5 +122,28 @@ export class Dashboard implements OnInit {
   closeExpenseModal() {
     this.isExpenseModalOpen = false;
     document.body.style.overflow = 'auto';
+  }
+
+  getEMIstatus(date: string | Date) {
+    const today = new Date();
+    const emiDate = new Date(date);
+
+    today.setHours(0, 0, 0, 0);
+    emiDate.setHours(0, 0, 0, 0);
+
+    const diffDays = Math.ceil((emiDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
+
+    if (diffDays < 0) {
+      return { text: 'OverDue', class: 'bg-red-100 text-red-700' };
+    }
+    if (diffDays <= 5) {
+      return { text: 'Due Soon', class: 'bg-yellow-100 text-yellow-700' };
+    }
+
+    if (diffDays <= 25) {
+      return { text: 'Upcoming', class: 'bg-green-100 text-green-700' };
+    }
+
+    return null;
   }
 }
