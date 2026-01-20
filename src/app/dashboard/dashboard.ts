@@ -1,10 +1,9 @@
-import { Component, inject, OnInit, signal, WritableSignal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, OnInit, signal, WritableSignal } from '@angular/core';
 import { Header } from '../header/header';
 import { SideNavigation } from '../side-navigation/side-navigation';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { CategoryService } from '../services/category-service';
-import { Category } from '../models/categories.model';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { EMIService } from '../services/emi-service';
 
@@ -14,43 +13,13 @@ import { EMIService } from '../services/emi-service';
   standalone: true,
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Dashboard implements OnInit {
   categoryForm!: FormGroup;
 
   isCategoryModalOpen = false;
   isExpenseModalOpen = false;
-
-  // emiReminders = [
-  //   {
-  //     name: 'ICICI personal loan EMI',
-  //     date: '5th Jan 2026',
-  //     amount: '₹12,500',
-  //     status: 'Upcoming',
-  //     statusColor: 'bg-emerald-100 text-emerald-700',
-  //   },
-  //   {
-  //     name: 'BIKE loan EMI',
-  //     date: '27th Dec 2025',
-  //     amount: '₹10,500',
-  //     status: 'Due Soon',
-  //     statusColor: 'bg-yellow-100 text-yellow-700',
-  //   },
-  //   {
-  //     name: 'Credit Card EMI',
-  //     date: '22nd Dec 2025',
-  //     amount: '₹5000',
-  //     status: 'Overdue',
-  //     statusColor: 'bg-red-100 text-red-700',
-  //   },
-  //   {
-  //     name: 'Phone EMI',
-  //     date: '27th Dec 2025',
-  //     amount: '₹2,500',
-  //     status: 'Due Soon',
-  //     statusColor: 'bg-yellow-100 text-yellow-700',
-  //   },
-  // ];
 
   activities = [
     {

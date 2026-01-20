@@ -38,6 +38,7 @@ export class Expenses {
     },
   ];
 
+
   constructor(private route: Router) {}
 
   toggleSidebar() {
