@@ -19,7 +19,7 @@ export class CategoryService {
       tap({
         next: (categories) => this.categoriesSignal.set(categories),
         error: (err) => this.categoriesSignal.set(err),
-      })
+      }),
     );
   }
 
@@ -27,7 +27,7 @@ export class CategoryService {
     return this.http.post<Category>(`${this.apiLink}`, category).pipe(
       tap((newCategory) => {
         this.categoriesSignal.update((prev) => [...prev, newCategory]);
-      })
+      }),
     );
   }
 
@@ -35,15 +35,17 @@ export class CategoryService {
     return this.http.delete<{ message: string; _id: string }>(`${this.apiLink}/${_id}`).pipe(
       tap(() => {
         this.categoriesSignal.update((prev) => prev.filter((cat) => cat._id !== _id));
-      })
+      }),
     );
   }
 
   updateCategories(_id: string, category: Pick<Category, 'name' | 'icon' | 'date'>) {
     return this.http.put<Category>(`${this.apiLink}/${_id}`, category).pipe(
       tap((updateCategory) => {
-        this.categoriesSignal.update((prev) => [...prev, updateCategory]);
-      })
+        this.categoriesSignal.update((prev) =>
+          prev.map((exp) => (exp._id !== _id ? updateCategory : exp)),
+        );
+      }),
     );
   }
 }

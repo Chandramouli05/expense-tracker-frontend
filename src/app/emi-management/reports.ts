@@ -34,6 +34,7 @@ export class Reports implements OnInit {
 
   ngOnInit() {
     this.emiService.getEMI().subscribe();
+    this.updateEMI();
   }
 
   openEMIModal() {
@@ -62,24 +63,12 @@ export class Reports implements OnInit {
   }
 
   updateEMI() {
-    if (this.emiForm.invalid) return;
-
-    if (!this.selectedEMIid) {
-      console.error('Edit clicked without selecting EMI');
-      return;
-    }
-
     this.emiService.updateEMI(this.selectedEMIid, this.emiForm.value).subscribe({
       next: () => {
+        this.emiForm.reset();
         this.closeEMIModal();
       },
       error: (err) => console.error(err),
-    });
-
-    this.emiService.getEMI().subscribe({
-      next: () => {
-        this.closeEMIModal();
-      },
     });
   }
 

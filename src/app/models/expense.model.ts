@@ -1,4 +1,4 @@
-export interface Expenses {
+export interface ExpenseModal {
     _id: string;
     title: string;
     amount: string;

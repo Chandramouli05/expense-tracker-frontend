@@ -1,4 +1,12 @@
-import { ChangeDetectionStrategy, Component, inject, OnInit, signal, WritableSignal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+  OnInit,
+  signal,
+  WritableSignal,
+} from '@angular/core';
 import { Header } from '../header/header';
 import { SideNavigation } from '../side-navigation/side-navigation';
 import { CommonModule } from '@angular/common';
@@ -6,6 +14,7 @@ import { RouterLink } from '@angular/router';
 import { CategoryService } from '../services/category-service';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { EMIService } from '../services/emi-service';
+import { ExpenseService } from '../services/expenses-service';
 
 @Component({
   selector: 'app-dashboard',
@@ -54,13 +63,18 @@ export class Dashboard implements OnInit {
 
   private categoryService = inject(CategoryService);
   private emiService = inject(EMIService);
+  private expenseService = inject(ExpenseService);
 
   categories = this.categoryService.category;
   emiList = this.emiService.emi;
+  expense = this.expenseService.expenses;
+
+  dashboardExp = computed(() => this.expense().slice(0, 4));
 
   ngOnInit() {
     this.categoryService.getCategories().subscribe();
     this.emiService.getEMI().subscribe();
+    this.expenseService.getExpenses().subscribe();
   }
 
   addCategory() {
@@ -71,6 +85,19 @@ export class Dashboard implements OnInit {
       },
       error: (err) => console.error(err),
     });
+  }
+
+  changeStatusColor(status: string) {
+    if (status === 'Successful') {
+      return 'text-green-500';
+    }
+    if (status === 'Pending') {
+      return 'text-yellow-500';
+    }
+    if (status === 'Failed') {
+      return 'text-red-600';
+    }
+    return '';
   }
 
   openCategoryModal() {

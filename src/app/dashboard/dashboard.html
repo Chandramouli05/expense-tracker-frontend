@@ -317,32 +317,47 @@
                                     <h4 class="text-xl font-semibold text-slate-400">Last Month Activities</h4>
                                     <p class="text-xs text-slate-300">Monthly Activities</p>
                                 </div>
-                                <button class="text-blue-600 font-semibold hover:underline" [routerLink]="['/expenses']">View All</button>
+                                <button class="text-blue-600 font-semibold hover:underline"
+                                    [routerLink]="['/expenses']">View All</button>
                             </div>
 
                             <div class="overflow-x-auto">
                                 <table class="w-full text-left">
                                     <thead>
                                         <tr class="text-xs font-medium text-slate-300 uppercase tracking-wider">
-                                            <th class="pb-4 pr-4">Categories Names</th>
-                                            <th class="pb-4 px-4 text-center">Transactions</th>
-                                            <th class="pb-4 px-4 text-center">Date</th>
+                                            <th class="pb-4 pr-4">Title</th>
+                                            <th class="pb-4 px-4 text-center">Category</th>
+                                            <th class="pb-4 px-4 text-center">Transaction Status</th>
+                                            <th class="pb-4 pl-4 text-center">Date</th>
                                             <th class="pb-4 pl-4 text-right">Amount</th>
                                         </tr>
                                     </thead>
                                     <tbody class="divide-y divide-slate-50">
-                                        <tr *ngFor="let act of activities"
-                                            class="group hover:bg-slate-50 transition-colors">
-                                            <td class="py-6 pr-4 font-bold text-slate-800">{{ act.name }}</td>
-                                            <td class="py-6 px-4 text-center font-semibold" [class]="act.statusColor">{{
-                                                act.status }}</td>
-                                            <td class="py-6 px-4 text-center text-slate-800 font-medium">{{ act.date
-                                                }}
+                                        @for (act of dashboardExp(); track act._id) {
+                                        <tr class="group hover:bg-slate-50 transition-colors">
+                                            <td class="py-6 pr-4 font-semibold text-slate-800">
+                                                {{ act.title }}
                                             </td>
-                                            <td class="py-6 pl-4 text-right font-bold text-slate-800">{{ act.amount
-                                                }}
+
+                                            <td class="py-6 px-4 text-center font-semibold">
+                                                {{ act.category }}
+                                            </td>
+
+                                            <td class="py-6 px-4 text-center font-medium"
+                                                [ngClass]="changeStatusColor(act.status)">
+                                                {{ act.status }}
+                                            </td>
+
+                                            <td class="py-6 px-4 text-center font-medium">
+                                                {{ act.date | date:'dd MMM yyyy' }}
+                                            </td>
+
+                                            <td class="py-6 pl-4 text-right font-medium">
+                                                {{ act.amount | currency:'INR' }}
                                             </td>
                                         </tr>
+                                        }
+
                                     </tbody>
                                 </table>
                             </div>

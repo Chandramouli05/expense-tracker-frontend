@@ -1,6 +1,6 @@
 import { Injectable, signal } from '@angular/core';
 import { environment } from '../../environments/environment.development';
-import { Expenses } from '../models/expense.model';
+import { ExpenseModal } from '../models/expense.model';
 import { HttpClient } from '@angular/common/http';
 import { tap } from 'rxjs';
 
@@ -9,13 +9,13 @@ import { tap } from 'rxjs';
 })
 export class ExpenseService {
   private apiLink = environment.apiUrl + '/expenses';
-  private expensesSignal = signal<Expenses[]>([]);
+  private expensesSignal = signal<ExpenseModal[]>([]);
   readonly expenses = this.expensesSignal.asReadonly();
 
   constructor(private http: HttpClient) {}
 
   getExpenses() {
-    return this.http.get<Expenses[]>(`${this.apiLink}`).pipe(
+    return this.http.get<ExpenseModal[]>(`${this.apiLink}`).pipe(
       tap({
         next: (expense) => this.expensesSignal.set(expense),
         error: (err) => this.expensesSignal.set(err),
@@ -23,8 +23,8 @@ export class ExpenseService {
     );
   }
 
-  createExpenses(exp: Expenses) {
-    return this.http.post<Expenses>(`${this.apiLink}`, exp).pipe(
+  createExpenses(exp: ExpenseModal) {
+    return this.http.post<ExpenseModal>(`${this.apiLink}`, exp).pipe(
       tap({
         next: (newExp) => this.expensesSignal.update((prev) => [...prev, newExp]),
         error: (err) => this.expensesSignal.set(err),
@@ -32,10 +32,12 @@ export class ExpenseService {
     );
   }
 
-  updateExpenses(_id: string, expense: Expenses) {
-    return this.http.put<Expenses>(`${this.apiLink}/${_id}`, expense).pipe(
+  updateExpenses(_id: string, expense: ExpenseModal) {
+    return this.http.put<ExpenseModal>(`${this.apiLink}/${_id}`, expense).pipe(
       tap((updateExpense) => {
-        this.expensesSignal.update((prev) => [...prev, updateExpense]);
+        this.expensesSignal.update((prev) =>
+          prev.map((exp) => (exp._id === _id ? updateExpense : exp)),
+        );
       }),
     );
   }
