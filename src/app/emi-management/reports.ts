@@ -34,7 +34,6 @@ export class Reports implements OnInit {
 
   ngOnInit() {
     this.emiService.getEMI().subscribe();
-    this.updateEMI();
   }
 
   openEMIModal() {
@@ -43,14 +42,17 @@ export class Reports implements OnInit {
   }
 
   closeEMIModal() {
-    this.emiForm.reset();
     this.isEMIModalOpen = false;
     this.isEditModalOpen = false;
+    this.selectedEMIid = '';
+    this.emiForm.reset();
     document.body.style.overflow = 'auto';
   }
 
   openEditModal(emi: EMI) {
     this.selectedEMIid = emi._id;
+
+    this.isEMIModalOpen = false;
     this.isEditModalOpen = true;
 
     this.emiForm.patchValue({
@@ -63,10 +65,12 @@ export class Reports implements OnInit {
   }
 
   updateEMI() {
+    if (!this.selectedEMIid || this.emiForm.invalid) return;
+
     this.emiService.updateEMI(this.selectedEMIid, this.emiForm.value).subscribe({
       next: () => {
-        this.emiForm.reset();
         this.closeEMIModal();
+        this.emiForm.reset();
       },
       error: (err) => console.error(err),
     });

@@ -29,7 +29,7 @@ export class EMIService {
     return this.http
       .get<EMI[]>(`${this.apiLink}`)
       .pipe(map((res) => res.map((val) => val.date)))
-      .subscribe((res) => console.log(res));
+
   }
 
   createEMI(emi: EMI) {
