@@ -40,7 +40,7 @@ export class EMIService {
     );
   }
 
-  updateEMI(_id: string, emi: Pick<EMI, 'name' | 'amount' | 'date'>) {
+  updateEMI(_id: string, emi: EMI) {
     return this.http.put<EMI>(`${this.apiLink}/${_id}`, emi).pipe(
       tap((updatedEMI) => {
         this.emiSignal.update((prev) =>

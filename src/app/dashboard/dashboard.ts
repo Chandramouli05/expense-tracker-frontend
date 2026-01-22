@@ -30,30 +30,6 @@ export class Dashboard implements OnInit {
   isCategoryModalOpen = false;
   isExpenseModalOpen = false;
 
-  activities = [
-    {
-      name: 'Home Electricity Bill',
-      status: 'Successful',
-      date: '27 / 10 / 2025',
-      amount: '₹450',
-      statusColor: 'text-emerald-500',
-    },
-    {
-      name: 'Festival Shopping',
-      status: 'Pending',
-      date: '27 / 10 / 2025',
-      amount: '₹450',
-      statusColor: 'text-yellow-500',
-    },
-    {
-      name: 'Car Services',
-      status: 'Successful',
-      date: '27 / 10 / 2025',
-      amount: '₹450',
-      statusColor: 'text-emerald-500',
-    },
-  ];
-
   constructor(private fb: FormBuilder) {
     this.categoryForm = this.fb.group({
       name: ['', [Validators.required]],

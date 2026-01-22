@@ -39,11 +39,11 @@ export class CategoryService {
     );
   }
 
-  updateCategories(_id: string, category: Pick<Category, 'name' | 'icon' | 'date'>) {
+  updateCategories(_id: string, category: Category) {
     return this.http.put<Category>(`${this.apiLink}/${_id}`, category).pipe(
       tap((updateCategory) => {
         this.categoriesSignal.update((prev) =>
-          prev.map((exp) => (exp._id !== _id ? updateCategory : exp)),
+          prev.map((exp) => (exp._id === _id ? updateCategory : exp)),
         );
       }),
     );
