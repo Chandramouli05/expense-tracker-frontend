@@ -8,22 +8,51 @@ import { CategoryService } from '../services/category-service';
 import { EMIService } from '../services/emi-service';
 import { ExpenseService } from '../services/expenses-service';
 
+interface IncomeItem {
+  title: string;
+  type: string;
+  amount: number;
+  date: string;
+}
+
+interface SavingsItem {
+  title: string;
+  type: string;
+  amount: number;
+  date: string;
+}
+
 @Component({
   selector: 'app-budgets',
   imports: [Header, SideNavigation, CommonModule, RouterLink, ReactiveFormsModule],
   templateUrl: './budgets.html',
   styleUrl: './budgets.scss',
 })
-export class Budgets implements OnInit{
-  categoryForm!: FormGroup;
+export class Budgets implements OnInit {
+
+  manageForm!: FormGroup;
 
   isCategoryModalOpen = false;
   isExpenseModalOpen = false;
+  isManageModalOpen = false;
+  activeTab: 'income' | 'savings' = 'income';
+
+  // Income and Savings Lists
+  incomeList: IncomeItem[] = [];
+  savingsList: SavingsItem[] = [];
+  
 
   constructor(private fb: FormBuilder) {
-    this.categoryForm = this.fb.group({
-      name: ['', [Validators.required]],
-      icon: ['', [Validators.required]],
+
+    this.manageForm = this.fb.group({
+      incomeTitle: [''],
+      incomeType: [''],
+      incomeAmount: [0],
+      incomeDate: [''],
+      savingsTitle: [''],
+      savingsType: [''],
+      savingsAmount: [0],
+      savingsDate: [''],
     });
   }
 
@@ -43,14 +72,37 @@ export class Budgets implements OnInit{
     this.expenseService.getExpenses().subscribe();
   }
 
-  addCategory() {
-    this.categoryService.postCategories(this.categoryForm.value).subscribe({
-      next: () => {
-        this.categoryForm.reset();
-        this.closeCategoryModal();
-      },
-      error: (err) => console.error(err),
-    });
+
+
+  handleManageSubmit() {
+    const formValue = this.manageForm.value;
+
+    // Add income if form is filled
+    if (formValue.incomeTitle && formValue.incomeType && formValue.incomeAmount && formValue.incomeDate) {
+      this.incomeList.unshift({
+        title: formValue.incomeTitle,
+        type: formValue.incomeType,
+        amount: formValue.incomeAmount,
+        date: formValue.incomeDate
+      });
+    }
+
+    // Add savings if form is filled
+    if (formValue.savingsTitle && formValue.savingsType && formValue.savingsAmount && formValue.savingsDate) {
+      this.savingsList.unshift({
+        title: formValue.savingsTitle,
+        type: formValue.savingsType,
+        amount: formValue.savingsAmount,
+        date: formValue.savingsDate
+      });
+    }
+
+    // Close modal and reset form
+    this.closeManageModal();
+    this.manageForm.reset();
+
+    // Optional: You can add a success notification here
+    console.log('Budget updated successfully!');
   }
 
   changeStatusColor(status: string) {
@@ -83,6 +135,16 @@ export class Budgets implements OnInit{
 
   closeExpenseModal() {
     this.isExpenseModalOpen = false;
+    document.body.style.overflow = 'auto';
+  }
+
+  openManageModal() {
+    this.isManageModalOpen = true;
+    document.body.style.overflow = 'hidden';
+  }
+
+  closeManageModal() {
+    this.isManageModalOpen = false;
     document.body.style.overflow = 'auto';
   }
 
