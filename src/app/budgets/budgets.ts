@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, computed, inject, OnInit } from '@angular/core';
+import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { SideNavigation } from '../side-navigation/side-navigation';
@@ -11,14 +11,14 @@ import { ExpenseService } from '../services/expenses-service';
 interface IncomeItem {
   title: string;
   type: string;
-  amount: number;
+  amount: string;
   date: string;
 }
 
 interface SavingsItem {
   title: string;
   type: string;
-  amount: number;
+  amount: string;
   date: string;
 }
 
@@ -29,29 +29,43 @@ interface SavingsItem {
   styleUrl: './budgets.scss',
 })
 export class Budgets implements OnInit {
-
   manageForm!: FormGroup;
 
   isCategoryModalOpen = false;
   isExpenseModalOpen = false;
   isManageModalOpen = false;
+  totalExpenseAmount = signal(0);
   activeTab: 'income' | 'savings' = 'income';
 
-  // Income and Savings Lists
-  incomeList: IncomeItem[] = [];
-  savingsList: SavingsItem[] = [];
-  
+  // Income and Savings signal Lists
+  incomeListSignal = signal<IncomeItem[]>([]);
+  savingsListSignal = signal<SavingsItem[]>([]);
+
+  get incomeList(): IncomeItem[] {
+    return this.incomeListSignal();
+  }
+
+  get savingsList(): SavingsItem[] {
+    return this.savingsListSignal();
+  }
+
+  totalIncomeAmount = computed(() => {
+    return this.incomeListSignal().reduce((total, item) => total + Number(item.amount), 0);
+  });
+
+  totalSavingsAmount = computed(() => {
+    return this.savingsListSignal().reduce((total, item) => total + Number(item.amount), 0);
+  });
 
   constructor(private fb: FormBuilder) {
-
     this.manageForm = this.fb.group({
       incomeTitle: [''],
       incomeType: [''],
-      incomeAmount: [0],
+      incomeAmount: [''],
       incomeDate: [''],
       savingsTitle: [''],
       savingsType: [''],
-      savingsAmount: [0],
+      savingsAmount: [''],
       savingsDate: [''],
     });
   }
@@ -65,43 +79,68 @@ export class Budgets implements OnInit {
   expense = this.expenseService.expenses;
 
   dashboardExp = computed(() => this.expense().slice(0, 4));
+  totalExpense = computed(() =>
+    this.expenseService
+      .getTotalExpenseAmount()
+      .subscribe((val) => this.totalExpenseAmount.set(val)),
+  );
 
   ngOnInit() {
     this.categoryService.getCategories().subscribe();
     this.emiService.getEMI().subscribe();
     this.expenseService.getExpenses().subscribe();
+    this.totalExpense();
   }
-
-
 
   handleManageSubmit() {
     const formValue = this.manageForm.value;
 
     // Add income if form is filled
-    if (formValue.incomeTitle && formValue.incomeType && formValue.incomeAmount && formValue.incomeDate) {
-      this.incomeList.unshift({
+    if (
+      formValue.incomeTitle &&
+      formValue.incomeType &&
+      formValue.incomeAmount &&
+      formValue.incomeDate
+    ) {
+      const newIncome: IncomeItem = {
         title: formValue.incomeTitle,
         type: formValue.incomeType,
         amount: formValue.incomeAmount,
-        date: formValue.incomeDate
-      });
+        date: formValue.incomeDate,
+      };
+
+      // ✅ CORRECT: Update the signal, not the getter
+      this.incomeListSignal.update((list) => [newIncome, ...list]);
+
+      console.log('Income added:', newIncome);
+      console.log('Total Income:', this.totalIncomeAmount());
     }
 
     // Add savings if form is filled
-    if (formValue.savingsTitle && formValue.savingsType && formValue.savingsAmount && formValue.savingsDate) {
-      this.savingsList.unshift({
+    if (
+      formValue.savingsTitle &&
+      formValue.savingsType &&
+      formValue.savingsAmount &&
+      formValue.savingsDate
+    ) {
+      const newSavings: SavingsItem = {
         title: formValue.savingsTitle,
         type: formValue.savingsType,
         amount: formValue.savingsAmount,
-        date: formValue.savingsDate
-      });
+        date: formValue.savingsDate,
+      };
+
+      // ✅ CORRECT: Update the signal, not the getter
+      this.savingsListSignal.update((list) => [newSavings, ...list]);
+
+      console.log('Savings added:', newSavings);
+      console.log('Total Savings:', this.totalSavingsAmount());
     }
 
     // Close modal and reset form
     this.closeManageModal();
     this.manageForm.reset();
 
-    // Optional: You can add a success notification here
     console.log('Budget updated successfully!');
   }
 

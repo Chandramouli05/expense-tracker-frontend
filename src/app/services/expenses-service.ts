@@ -2,7 +2,7 @@ import { Injectable, signal } from '@angular/core';
 import { environment } from '../../environments/environment.development';
 import { ExpenseModal } from '../models/expense.model';
 import { HttpClient } from '@angular/common/http';
-import { tap } from 'rxjs';
+import { map, tap } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -21,6 +21,12 @@ export class ExpenseService {
         error: (err) => this.expensesSignal.set(err),
       }),
     );
+  }
+
+  getTotalExpenseAmount(){
+    return this.http.get<ExpenseModal[]>(`${this.apiLink}`).pipe(
+     map((exp)=> exp.reduce((total,item)=> total + Number(item.amount),0))
+    )
   }
 
   createExpenses(exp: ExpenseModal) {
