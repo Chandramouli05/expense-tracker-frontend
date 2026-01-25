@@ -11,6 +11,7 @@ import { Budgets } from './budgets/budgets';
 import { Reports } from './emi-management/reports';
 import { Expenses } from './expenses/expenses';
 import { Notifications } from './notifications/notifications';
+import { BudgetResolver } from './resolvers/budget.resolver';
 
 export const routes: Routes = [
   { path: '', component: LoginComponent },
@@ -19,7 +20,7 @@ export const routes: Routes = [
   { path: 'add-expense', component: AddExpenseComponent },
   { path: 'expenses', component: Expenses },
   { path: 'categories', component: Categories },
-  { path: 'budgets', component: Budgets },
+  { path: 'budgets', component: Budgets, resolve: { preload: BudgetResolver } },
   { path: 'emi-management', component: Reports },
   { path: 'notifications', component: Notifications },
 

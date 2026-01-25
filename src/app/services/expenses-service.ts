@@ -2,7 +2,7 @@ import { Injectable, signal } from '@angular/core';
 import { environment } from '../../environments/environment.development';
 import { ExpenseModal } from '../models/expense.model';
 import { HttpClient } from '@angular/common/http';
-import { map, tap } from 'rxjs';
+import { map, Observable, share, shareReplay, tap } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -12,7 +12,19 @@ export class ExpenseService {
   private expensesSignal = signal<ExpenseModal[]>([]);
   readonly expenses = this.expensesSignal.asReadonly();
 
+  private expenseRequest$?: Observable<ExpenseModal[]>;
+
   constructor(private http: HttpClient) {}
+
+  loadExpense() {
+    if (!this.expenseRequest$) {
+      this.expenseRequest$ = this.http.get<ExpenseModal[]>(this.apiLink).pipe(
+        tap((exp) => this.expensesSignal.set(exp)),
+        shareReplay(1),
+      );
+    }
+    return this.expenseRequest$;
+  }
 
   getExpenses() {
     return this.http.get<ExpenseModal[]>(`${this.apiLink}`).pipe(
@@ -21,12 +33,6 @@ export class ExpenseService {
         error: (err) => this.expensesSignal.set(err),
       }),
     );
-  }
-
-  getTotalExpenseAmount(){
-    return this.http.get<ExpenseModal[]>(`${this.apiLink}`).pipe(
-     map((exp)=> exp.reduce((total,item)=> total + Number(item.amount),0))
-    )
   }
 
   createExpenses(exp: ExpenseModal) {

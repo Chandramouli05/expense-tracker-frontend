@@ -111,14 +111,15 @@
 
                                 <!-- Action Buttons -->
                                 <div class="flex gap-4 pt-4">
-                                    <button type="submit"
-                                        class="flex-1 bg-gradient-to-r from-blue-600 to-blue-700 text-white font-semibold py-3 rounded-lg hover:from-blue-700 hover:to-blue-800 transition-all shadow-md hover:shadow-lg transform hover:-translate-y-0.5">
-                                        Save Changes
-                                    </button>
                                     <button type="button" (click)="closeManageModal()"
                                         class="flex-1 bg-gradient-to-r from-slate-100 to-slate-200 text-slate-700 font-semibold py-3 rounded-lg hover:from-slate-200 hover:to-slate-300 transition-all shadow-sm hover:shadow transform hover:-translate-y-0.5">
                                         Cancel
                                     </button>
+                                    <button type="submit"
+                                        class="flex-1 bg-gradient-to-r from-blue-600 to-blue-700 text-white font-semibold py-3 rounded-lg hover:from-blue-700 hover:to-blue-800 transition-all shadow-md hover:shadow-lg transform hover:-translate-y-0.5">
+                                        Save Changes
+                                    </button>
+
                                 </div>
                             </form>
                         </div>
@@ -155,7 +156,8 @@
                                 <div
                                     class="bg-[#E7F9F3] p-6 rounded-[0.5rem] relative overflow-hidden group hover:shadow-lg hover:shadow-emerald-100/50 transition-all cursor-pointer">
                                     <div class="relative z-10">
-                                        <h5 class="text-2xl font-semibold text-slate-900 mb-1">₹45,230</h5>
+                                        <h5 class="text-2xl font-semibold text-slate-900 mb-1">{{totalBalanceAmount |
+                                            currency:'INR'}}</h5>
                                         <p class="text-slate-500 font-medium">Total Balance</p>
                                     </div>
                                     <img src="assets/images/total_balance.png?height=60&width=60"
@@ -167,7 +169,8 @@
                                 <div
                                     class="bg-[#FDF2E7] p-6 rounded-[0.5rem] relative overflow-hidden group hover:shadow-lg hover:shadow-orange-100/50 transition-all cursor-pointer">
                                     <div class="relative z-10">
-                                        <h5 class="text-2xl font-semibold text-slate-900 mb-1">₹ {{totalExpenseAmount()}}</h5>
+                                        <h5 class="text-2xl font-semibold text-slate-900 mb-1">{{totalExpenseAmount() |
+                                            currency:'INR'}}</h5>
                                         <p class="text-slate-500 font-medium">Expenses</p>
                                     </div>
                                     <img src="assets/images/Expenses.png?height=60&width=60"
@@ -179,7 +182,8 @@
                                 <div
                                     class="bg-[#E7F2FD] p-6 rounded-[0.5rem] relative overflow-hidden group hover:shadow-lg hover:shadow-blue-100/50 transition-all cursor-pointer">
                                     <div class="relative z-10">
-                                        <h5 class="text-2xl font-semibold text-slate-900 mb-1">₹ {{totalIncomeAmount()}}</h5>
+                                        <h5 class="text-2xl font-semibold text-slate-900 mb-1">{{totalIncomeAmount()
+                                            |currency:'INR'}}</h5>
                                         <p class="text-slate-500 font-medium">Income</p>
                                     </div>
                                     <img src="assets/images/income.png?height=60&width=60"
@@ -191,7 +195,8 @@
                                 <div
                                     class="bg-[#FDE7F2] p-6 rounded-[0.5rem] relative overflow-hidden group hover:shadow-lg hover:shadow-pink-100/50 transition-all cursor-pointer">
                                     <div class="relative z-10">
-                                        <h5 class="text-2xl font-semibold text-slate-900 mb-1">₹ {{totalSavingsAmount()}}</h5>
+                                        <h5 class="text-2xl font-semibold text-slate-900 mb-1">{{totalSavingAmount()|
+                                            currency:'INR'}} </h5>
                                         <p class="text-slate-500 font-medium">Savings</p>
                                     </div>
                                     <img src="assets/images/savings.png?height=60&width=60"
@@ -248,7 +253,7 @@
                                         </tr>
                                     </thead>
                                     <tbody class="divide-y divide-slate-50">
-                                        @for (item of incomeList; track item.title) {
+                                        @for (item of incomeList(); track item._id) {
                                         <tr class="group hover:bg-slate-50 transition-colors">
                                             <td class="py-6 pr-4 font-semibold text-slate-800">
                                                 {{ item.title }}
@@ -263,12 +268,23 @@
                                             <td class="py-6 pl-4 text-right font-medium">
                                                 {{ item.amount | currency:'INR' }}
                                             </td>
-                                            <td class="py-6 px-4 text-center font-medium text-green-500">
-                                                Successful
+                                            <td class="py-6 px-4 flex justify-end font-medium text-green-500">
+                                                 <div class="flex gap-3 m-0">
+                                                    <button
+                                                        class="px-3 py-1 cus-btn-primary text-white rounded-lg font-semibold  transition-colors"
+                                                        (click)="openEditModal(item._id)">
+                                                        <span><i class="bi bi-pencil-square"></i></span>
+                                                    </button>
+                                                    <button
+                                                        class="px-4 py-1 cus-btn-secondary text-white rounded-lg font-semibold  transition-colors"
+                                                        (click)="deleteIncome(item._id)">
+                                                        <span><i class="bi bi-trash"></i></span>
+                                                    </button>
+                                                </div>
                                             </td>
                                         </tr>
                                         }
-                                        @if(incomeList.length === 0){
+                                        @if(incomeList().length === 0){
                                         <tr>
                                             <td colspan="5" class="py-8 text-center font-medium text-lg text-slate-400">
                                                 <p class="text-blue-300">No Income records found.</p>
@@ -295,7 +311,7 @@
                                         </tr>
                                     </thead>
                                     <tbody class="divide-y divide-slate-50">
-                                        @for (item of savingsList; track item.title) {
+                                        @for (item of savingList(); track item._id) {
                                         <tr class="group hover:bg-slate-50 transition-colors">
                                             <td class="py-6 pr-4 font-semibold text-slate-800">
                                                 {{ item.title }}
@@ -310,12 +326,23 @@
                                             <td class="py-6 pl-4 text-right font-medium">
                                                 {{ item.amount | currency:'INR' }}
                                             </td>
-                                            <td class="py-6 px-4 text-center font-medium text-green-500">
-                                                Successful
+                                            <td class="py-6 px-4 flex justify-end font-medium text-green-500">
+                                                 <div class="flex gap-3 m-0">
+                                                    <button
+                                                        class="px-3 py-1 cus-btn-primary text-white rounded-lg font-semibold  transition-colors"
+                                                        (click)="openEditModal(item._id)">
+                                                        <span><i class="bi bi-pencil-square"></i></span>
+                                                    </button>
+                                                    <button
+                                                        class="px-4 py-1 cus-btn-secondary text-white rounded-lg font-semibold  transition-colors"
+                                                        (click)="deleteSavings(item._id)">
+                                                        <span><i class="bi bi-trash"></i></span>
+                                                    </button>
+                                                </div>
                                             </td>
                                         </tr>
                                         }
-                                        @if(savingsList.length === 0){
+                                        @if(savingList().length === 0){
                                         <tr>
                                             <td colspan="5" class="py-8 text-center font-medium text-lg text-slate-400">
                                                 <p class="text-pink-300">No savings records found.</p>

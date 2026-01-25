@@ -1,5 +1,12 @@
 import { CommonModule } from '@angular/common';
-import { Component, computed, inject, OnInit, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+  OnInit,
+  signal,
+} from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { SideNavigation } from '../side-navigation/side-navigation';
@@ -7,26 +14,17 @@ import { Header } from '../header/header';
 import { CategoryService } from '../services/category-service';
 import { EMIService } from '../services/emi-service';
 import { ExpenseService } from '../services/expenses-service';
-
-interface IncomeItem {
-  title: string;
-  type: string;
-  amount: string;
-  date: string;
-}
-
-interface SavingsItem {
-  title: string;
-  type: string;
-  amount: string;
-  date: string;
-}
+import { IncomeService } from '../services/income-service';
+import { SavingsService } from '../services/savings-service';
+import { Income } from '../models/income.model';
+import { Savings } from '../models/savings.model';
 
 @Component({
   selector: 'app-budgets',
   imports: [Header, SideNavigation, CommonModule, RouterLink, ReactiveFormsModule],
   templateUrl: './budgets.html',
   styleUrl: './budgets.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Budgets implements OnInit {
   manageForm!: FormGroup;
@@ -34,28 +32,8 @@ export class Budgets implements OnInit {
   isCategoryModalOpen = false;
   isExpenseModalOpen = false;
   isManageModalOpen = false;
-  totalExpenseAmount = signal(0);
+
   activeTab: 'income' | 'savings' = 'income';
-
-  // Income and Savings signal Lists
-  incomeListSignal = signal<IncomeItem[]>([]);
-  savingsListSignal = signal<SavingsItem[]>([]);
-
-  get incomeList(): IncomeItem[] {
-    return this.incomeListSignal();
-  }
-
-  get savingsList(): SavingsItem[] {
-    return this.savingsListSignal();
-  }
-
-  totalIncomeAmount = computed(() => {
-    return this.incomeListSignal().reduce((total, item) => total + Number(item.amount), 0);
-  });
-
-  totalSavingsAmount = computed(() => {
-    return this.savingsListSignal().reduce((total, item) => total + Number(item.amount), 0);
-  });
 
   constructor(private fb: FormBuilder) {
     this.manageForm = this.fb.group({
@@ -73,23 +51,35 @@ export class Budgets implements OnInit {
   private categoryService = inject(CategoryService);
   private emiService = inject(EMIService);
   private expenseService = inject(ExpenseService);
+  private incomeServices = inject(IncomeService);
+  private savingServices = inject(SavingsService);
 
   categories = this.categoryService.category;
   emiList = this.emiService.emi;
   expense = this.expenseService.expenses;
+  incomeList = this.incomeServices.income;
+  savingList = this.savingServices.savings;
 
   dashboardExp = computed(() => this.expense().slice(0, 4));
-  totalExpense = computed(() =>
-    this.expenseService
-      .getTotalExpenseAmount()
-      .subscribe((val) => this.totalExpenseAmount.set(val)),
+
+  totalExpenseAmount = computed(() =>
+    this.expenseService.expenses().reduce((total, item) => total + Number(item.amount), 0),
   );
 
+  totalIncomeAmount = computed(() =>
+    this.incomeServices.income().reduce((total, item) => total + Number(item.amount), 0),
+  );
+
+  totalSavingAmount = computed(() =>
+    this.savingServices.savings().reduce((total, item) => total + Number(item.amount), 0),
+  );
+
+  totalBalanceAmount =
+    this.totalIncomeAmount() - this.totalExpenseAmount() - this.totalSavingAmount();
+
   ngOnInit() {
-    this.categoryService.getCategories().subscribe();
-    this.emiService.getEMI().subscribe();
-    this.expenseService.getExpenses().subscribe();
-    this.totalExpense();
+    this.incomeList();
+    this.savingList();
   }
 
   handleManageSubmit() {
@@ -102,15 +92,14 @@ export class Budgets implements OnInit {
       formValue.incomeAmount &&
       formValue.incomeDate
     ) {
-      const newIncome: IncomeItem = {
+      const newIncome: Income = {
         title: formValue.incomeTitle,
         type: formValue.incomeType,
         amount: formValue.incomeAmount,
         date: formValue.incomeDate,
-      };
+      } as Income;
 
-      // ✅ CORRECT: Update the signal, not the getter
-      this.incomeListSignal.update((list) => [newIncome, ...list]);
+      this.incomeServices.createIncome(newIncome).subscribe();
 
       console.log('Income added:', newIncome);
       console.log('Total Income:', this.totalIncomeAmount());
@@ -123,18 +112,15 @@ export class Budgets implements OnInit {
       formValue.savingsAmount &&
       formValue.savingsDate
     ) {
-      const newSavings: SavingsItem = {
+      const newSavings: Savings = {
         title: formValue.savingsTitle,
         type: formValue.savingsType,
         amount: formValue.savingsAmount,
         date: formValue.savingsDate,
-      };
+      } as Savings;
 
       // ✅ CORRECT: Update the signal, not the getter
-      this.savingsListSignal.update((list) => [newSavings, ...list]);
-
-      console.log('Savings added:', newSavings);
-      console.log('Total Savings:', this.totalSavingsAmount());
+      this.savingServices.createSavings(newSavings).subscribe();
     }
 
     // Close modal and reset form
@@ -185,6 +171,17 @@ export class Budgets implements OnInit {
   closeManageModal() {
     this.isManageModalOpen = false;
     document.body.style.overflow = 'auto';
+  }
+
+  openEditModal(_id: string) {}
+
+
+  deleteIncome(_id: string) {
+    this.incomeServices.deleteIncome(_id).subscribe();
+  }
+
+  deleteSavings(_id: string) {
+    this.savingServices.deleteSavings(_id).subscribe();
   }
 
   getEMIstatus(date: string | Date) {
