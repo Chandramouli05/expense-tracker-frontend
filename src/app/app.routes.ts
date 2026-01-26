@@ -12,16 +12,25 @@ import { Reports } from './emi-management/reports';
 import { Expenses } from './expenses/expenses';
 import { Notifications } from './notifications/notifications';
 import { BudgetResolver } from './resolvers/budget.resolver';
+import { DashboardResolver } from './resolvers/dashboard.resolver';
+import { ExpenseResolver } from './resolvers/expense.resolver';
+import { CategoriesResolver } from './resolvers/categories.resolver';
+import { EmiResolver } from './resolvers/emi.resolver';
 
 export const routes: Routes = [
   { path: '', component: LoginComponent },
 
-  { path: 'dashboard', component: Dashboard, canActivate: [authGuard] },
+  {
+    path: 'dashboard',
+    component: Dashboard,
+    canActivate: [authGuard],
+    resolve: { preload: DashboardResolver },
+  },
   { path: 'add-expense', component: AddExpenseComponent },
-  { path: 'expenses', component: Expenses },
-  { path: 'categories', component: Categories },
+  { path: 'expenses', component: Expenses, resolve: { preload: ExpenseResolver } },
+  { path: 'categories', component: Categories, resolve: { preload: CategoriesResolver } },
   { path: 'budgets', component: Budgets, resolve: { preload: BudgetResolver } },
-  { path: 'emi-management', component: Reports },
+  { path: 'emi-management', component: Reports, resolve: { preload: EmiResolver } },
   { path: 'notifications', component: Notifications },
 
   { path: 'login', component: LoginComponent },

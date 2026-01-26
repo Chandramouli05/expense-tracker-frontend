@@ -32,9 +32,7 @@ export class Reports implements OnInit {
 
   emiList = this.emiService.emi;
 
-  ngOnInit() {
-    this.emiService.getEMI().subscribe();
-  }
+  ngOnInit() {}
 
   openEMIModal() {
     this.isEMIModalOpen = true;

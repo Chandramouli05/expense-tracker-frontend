@@ -15,6 +15,8 @@ import { CategoryService } from '../services/category-service';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { EMIService } from '../services/emi-service';
 import { ExpenseService } from '../services/expenses-service';
+import { IncomeService } from '../services/income-service';
+import { SavingsService } from '../services/savings-service';
 
 @Component({
   selector: 'app-dashboard',
@@ -40,6 +42,9 @@ export class Dashboard implements OnInit {
   private categoryService = inject(CategoryService);
   private emiService = inject(EMIService);
   private expenseService = inject(ExpenseService);
+  private incomeServices = inject(IncomeService);
+  private savingServices = inject(SavingsService);
+  
 
   categories = this.categoryService.category;
   emiList = this.emiService.emi;
@@ -47,11 +52,23 @@ export class Dashboard implements OnInit {
 
   dashboardExp = computed(() => this.expense().slice(0, 4));
 
-  ngOnInit() {
-    this.categoryService.getCategories().subscribe();
-    this.emiService.getEMI().subscribe();
-    this.expenseService.getExpenses().subscribe();
-  }
+  totalExpenseAmount = computed(() =>
+    this.expenseService.expenses().reduce((total, item) => total + Number(item.amount), 0),
+  );
+
+  totalIncomeAmount = computed(() =>
+    this.incomeServices.income().reduce((total, item) => total + Number(item.amount), 0),
+  );
+
+  totalSavingAmount = computed(() =>
+    this.savingServices.savings().reduce((total, item) => total + Number(item.amount), 0),
+  );
+
+  totalBalanceAmount = computed(
+    () => this.totalIncomeAmount() - this.totalExpenseAmount() - this.totalSavingAmount(),
+  );
+
+  ngOnInit() {}
 
   addCategory() {
     this.categoryService.postCategories(this.categoryForm.value).subscribe({

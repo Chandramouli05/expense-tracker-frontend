@@ -43,8 +43,6 @@ export class Expenses implements OnInit {
   category = this.catService.category;
 
   ngOnInit() {
-    this.expService.getExpenses().subscribe();
-    this.catService.getCategories().subscribe();
     this.updateExpense();
   }
 

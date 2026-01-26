@@ -8,7 +8,6 @@ import {
   signal,
 } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { RouterLink } from '@angular/router';
 import { SideNavigation } from '../side-navigation/side-navigation';
 import { Header } from '../header/header';
 import { CategoryService } from '../services/category-service';
@@ -81,9 +80,6 @@ export class Budgets implements OnInit {
   totalBalanceAmount = computed(
     () => this.totalIncomeAmount() - this.totalExpenseAmount() - this.totalSavingAmount(),
   );
-
-  // totalBalanceAmount =
-  //   this.totalIncomeAmount() - this.totalExpenseAmount() - this.totalSavingAmount();
 
   ngOnInit() {
     this.incomeList();
