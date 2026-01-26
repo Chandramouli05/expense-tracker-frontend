@@ -36,10 +36,9 @@ export class SavingsService {
   }
 
   createSavings(exp: Savings) {
-    return this.http.post<Savings[]>(`${this.apiLink}`, exp).pipe(
-      tap({
-        next: (newSavings) => this.savingSignal.set(newSavings),
-        error: (err) => this.savingSignal.set(err),
+    return this.http.post<Savings>(`${this.apiLink}`, exp).pipe(
+      tap((savings) => {
+        this.savingSignal.update((prev) => [...prev, savings]);
       }),
     );
   }

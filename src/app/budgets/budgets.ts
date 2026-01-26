@@ -21,7 +21,7 @@ import { Savings } from '../models/savings.model';
 
 @Component({
   selector: 'app-budgets',
-  imports: [Header, SideNavigation, CommonModule, RouterLink, ReactiveFormsModule],
+  imports: [Header, SideNavigation, CommonModule, ReactiveFormsModule],
   templateUrl: './budgets.html',
   styleUrl: './budgets.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -32,6 +32,10 @@ export class Budgets implements OnInit {
   isCategoryModalOpen = false;
   isExpenseModalOpen = false;
   isManageModalOpen = false;
+  isEditModalOpen = false;
+
+  selectedIncomeId!: string;
+  selectedSavingsId!: string;
 
   activeTab: 'income' | 'savings' = 'income';
 
@@ -74,8 +78,12 @@ export class Budgets implements OnInit {
     this.savingServices.savings().reduce((total, item) => total + Number(item.amount), 0),
   );
 
-  totalBalanceAmount =
-    this.totalIncomeAmount() - this.totalExpenseAmount() - this.totalSavingAmount();
+  totalBalanceAmount = computed(
+    () => this.totalIncomeAmount() - this.totalExpenseAmount() - this.totalSavingAmount(),
+  );
+
+  // totalBalanceAmount =
+  //   this.totalIncomeAmount() - this.totalExpenseAmount() - this.totalSavingAmount();
 
   ngOnInit() {
     this.incomeList();
@@ -130,6 +138,38 @@ export class Budgets implements OnInit {
     console.log('Budget updated successfully!');
   }
 
+  updateBudget() {
+    const updatedIncome: Income = {
+      title: this.manageForm.value.incomeTitle,
+      type: this.manageForm.value.incomeType,
+      amount: this.manageForm.value.incomeAmount,
+      date: this.manageForm.value.incomeDate,
+    } as Income;
+
+    this.incomeServices.updateIncome(updatedIncome, this.selectedIncomeId).subscribe({
+      next: () => {
+        this.manageForm.reset();
+        this.closeManageModal();
+      },
+      error: (err) => console.error(err),
+    });
+
+    const updatedSaving: Savings = {
+      title: this.manageForm.value.savingsTitle,
+      type: this.manageForm.value.savingsType,
+      amount: this.manageForm.value.savingsAmount,
+      date: this.manageForm.value.savingsDate,
+    } as Savings;
+
+    this.savingServices.updateSavings(updatedSaving, this.selectedSavingsId).subscribe({
+      next: () => {
+        this.manageForm.reset();
+        this.closeManageModal();
+      },
+      error: (err) => console.error(err),
+    });
+  }
+
   changeStatusColor(status: string) {
     if (status === 'Successful') {
       return 'text-green-500';
@@ -170,17 +210,45 @@ export class Budgets implements OnInit {
 
   closeManageModal() {
     this.isManageModalOpen = false;
+    this.isEditModalOpen = false;
     document.body.style.overflow = 'auto';
   }
 
-  openEditModal(_id: string) {}
+  openEditModal(inc: Income) {
+    this.isEditModalOpen = true;
+    this.isManageModalOpen = false;
 
+    this.selectedIncomeId = inc._id;
+
+    this.manageForm.patchValue({
+      incomeTitle: inc.title,
+      incomeType: inc.type,
+      incomeAmount: inc.amount,
+      incomeDate: inc.date,
+    });
+  }
+
+  openEditSavingsModal(save: Savings) {
+    this.isEditModalOpen = true;
+    this.isManageModalOpen = false;
+
+    this.selectedSavingsId = save._id;
+
+    this.manageForm.patchValue({
+      savingsTitle: save.title,
+      savingsType: save.type,
+      savingsAmount: save.amount,
+      savingsDate: save.date,
+    });
+  }
 
   deleteIncome(_id: string) {
+    if (!confirm('Are you sure want to delete this Income?')) return;
     this.incomeServices.deleteIncome(_id).subscribe();
   }
 
   deleteSavings(_id: string) {
+    if (!confirm('Are you sure want to delete this Income?')) return;
     this.savingServices.deleteSavings(_id).subscribe();
   }
 

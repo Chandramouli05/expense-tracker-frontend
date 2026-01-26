@@ -38,11 +38,11 @@ export class IncomeService {
 
 
   createIncome(exp: Income) {
-    return this.http.post<Income[]>(`${this.apiLink}`, exp).pipe(
-      tap({
-        next: (newIncome) => this.incomeSignal.set(newIncome),
-        error: (err) => this.incomeSignal.set(err),
-      }),
+    return this.http.post<Income>(`${this.apiLink}`, exp).pipe(
+      tap((create) =>{
+        this.incomeSignal.update((prev)=> [...prev, create])
+      }
+      ),
     );
   }
 
