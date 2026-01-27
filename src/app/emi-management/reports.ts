@@ -9,7 +9,7 @@ import { EMI } from '../models/emi.model';
 
 @Component({
   selector: 'app-reports',
-  imports: [CommonModule, RouterLink, SideNavigation, Header, ReactiveFormsModule],
+  imports: [CommonModule,  SideNavigation, Header, ReactiveFormsModule],
   templateUrl: './reports.html',
   styleUrl: './reports.scss',
 })

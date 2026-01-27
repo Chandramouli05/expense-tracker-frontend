@@ -9,7 +9,7 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 
 @Component({
   selector: 'app-categories',
-  imports: [CommonModule, RouterLink, SideNavigation, Header, ReactiveFormsModule],
+  imports: [CommonModule,  SideNavigation, Header, ReactiveFormsModule],
   standalone: true,
   templateUrl: './categories.html',
   styleUrl: './categories.scss',

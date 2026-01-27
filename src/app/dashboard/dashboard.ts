@@ -17,10 +17,11 @@ import { EMIService } from '../services/emi-service';
 import { ExpenseService } from '../services/expenses-service';
 import { IncomeService } from '../services/income-service';
 import { SavingsService } from '../services/savings-service';
+import { ExpenseCategory } from '../expense-category/expense-category';
 
 @Component({
   selector: 'app-dashboard',
-  imports: [Header, SideNavigation, CommonModule, RouterLink, ReactiveFormsModule],
+  imports: [Header, SideNavigation, CommonModule, RouterLink, ReactiveFormsModule, ExpenseCategory],
   standalone: true,
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.scss',
@@ -44,7 +45,6 @@ export class Dashboard implements OnInit {
   private expenseService = inject(ExpenseService);
   private incomeServices = inject(IncomeService);
   private savingServices = inject(SavingsService);
-  
 
   categories = this.categoryService.category;
   emiList = this.emiService.emi;

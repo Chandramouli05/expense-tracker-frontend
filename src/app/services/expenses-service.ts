@@ -29,7 +29,7 @@ export class ExpenseService {
   getExpenses() {
     return this.http.get<ExpenseModal[]>(`${this.apiLink}`).pipe(
       tap({
-        next: (expense) => this.expensesSignal.set(expense),
+        next: (expense) =>{this.expensesSignal.set(expense)},
         error: (err) => this.expensesSignal.set(err),
       }),
     );
