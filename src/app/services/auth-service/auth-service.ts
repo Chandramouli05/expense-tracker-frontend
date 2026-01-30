@@ -20,12 +20,17 @@ export class AuthService {
   }
 
   login(data: User) {
-    return this.http.post<{ token: string; user: User }>(`${this.apiLink}/login`, data).pipe(
-      tap((res) => {
-        localStorage.setItem('token', res.token);
-        this.userSignal.set(res.user);
-      })
-    );
+    return this.http
+      .post<{
+        accessToken: string;
+        user: User;
+      }>(`${this.apiLink}/login`, data, { withCredentials: true })
+      .pipe(
+        tap((res) => {
+          localStorage.setItem('accessToken', res.accessToken);
+          this.userSignal.set(res.user);
+        }),
+      );
   }
 
   getUser() {
@@ -33,12 +38,26 @@ export class AuthService {
       tap({
         next: (user) => this.userSignal.set(user),
         error: () => this.userSignal.set(null),
-      })
+      }),
     );
   }
 
+  refreshToken() {
+    return this.http
+      .post<{ accessToken: string }>(`${this.apiLink}/refresh`, {}, { withCredentials: true })
+      .pipe(
+        tap((res) => {
+          localStorage.setItem('accessToken', res.accessToken);
+        }),
+      );
+  }
+
   logout() {
-    localStorage.removeItem('token');
-    this.userSignal.set(null);
+    return this.http.post(`${this.apiLink}/logout`, {}, { withCredentials: true }).pipe(
+      tap(() => {
+        localStorage.removeItem('accessToken');
+        this.userSignal.set(null);
+      }),
+    );
   }
 }

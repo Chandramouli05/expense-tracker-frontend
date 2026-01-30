@@ -21,7 +21,11 @@ export class LoginComponent {
   showForgotModal = signal(false);
   fwdEmail = signal('');
 
-  constructor(private route: Router, private fb: FormBuilder, private authService: AuthService) {
+  constructor(
+    private route: Router,
+    private fb: FormBuilder,
+    private authService: AuthService,
+  ) {
     this.myForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
       password: ['', Validators.required],
@@ -40,9 +44,7 @@ export class LoginComponent {
 
     this.authService.login(this.myForm.value).subscribe({
       next: (res: any) => {
-        localStorage.setItem('token', res.token);
         localStorage.setItem('firstName', JSON.stringify(res.user.firstName));
-
         this.success.set(true);
         this.successMsg.set('Login Successful');
         setTimeout(() => {

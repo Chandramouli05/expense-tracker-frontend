@@ -1,20 +1,20 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, OnInit, signal } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Component, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { SideNavigation } from '../side-navigation/side-navigation';
 import { Header } from '../header/header';
-import { EMIService } from '../services/emi-service';
 import { EMI } from '../models/emi.model';
+import { EMIService } from '../services/emi-service';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-reports',
-  imports: [CommonModule,  SideNavigation, Header, ReactiveFormsModule],
+  imports: [CommonModule, RouterLink, SideNavigation, Header,ReactiveFormsModule],
   templateUrl: './reports.html',
   styleUrl: './reports.scss',
 })
-export class EMIManagement implements OnInit {
-  emiForm!: FormGroup;
+export class Reports {
+ emiForm!: FormGroup;
   selectedEMIid!: string;
   isSidebarOpen = signal(false);
   isEMIModalOpen = false;

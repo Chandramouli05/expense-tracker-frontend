@@ -1,0 +1,163 @@
+<div class="min-h-screen bg-[#F8FAFC] flex">
+    <!-- Sidebar -->
+    <app-side-navigation></app-side-navigation>
+
+    <!-- Main Content Wrapper -->
+    <div class="flex-1 flex flex-col min-w-0 overflow-hidden">
+        <!-- Header -->
+        <app-header></app-header>
+
+        <!-- Scrollable Content -->
+        <main class="flex-1 overflow-y-auto p-4 md:p-8 pt-0">
+            <div class="max-w-[1400px] mx-auto space-y-8">
+                <!--Add EMI Modal-->
+                @if(isEMIModalOpen){
+                <div class="fixed inset-0 z-50 h-screen flex items-center justify-center bg-black/50 ">
+
+                    <div
+                        class="bg-white w-[90%] sm:w-[85%] md:w-full max-w-sm md:max-w-md  rounded-2xl shadow-xl p-4 sm:p-6 relative animate-scaleIn ">
+                        <!-- Close Button -->
+                        <button class="absolute top-4 right-4 text-slate-400 hover:text-slate-600"
+                            (click)="closeEMIModal()">
+                            ✕
+                        </button>
+
+                        <!-- Modal Header -->
+                        <h3 class="text-xl font-semibold text-slate-900 mb-6">
+                            Add EMI
+                        </h3>
+
+                        <!-- Form -->
+                        <form class="space-y-4" [formGroup]="emiForm">
+                            <div>
+                                <label class="block text-sm font-medium text-slate-600 mb-1">
+                                    EMI Name
+                                </label>
+                                <input type="text" formControlName="name"
+                                    class="w-full px-4 py-2 border border-gray-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 border-slate-200" />
+                            </div>
+
+
+                            <div>
+                                <label class="block text-sm font-medium text-slate-600 mb-1">
+                                    Amount
+                                </label>
+                                <input type="text" formControlName="amount"
+                                    class="w-full px-4 py-2 border border-gray-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 border-slate-200" />
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-medium text-slate-600 mb-1">
+                                    Date
+                                </label>
+                                <input type="date" formControlName="date"
+                                    class="w-full px-4 py-2 border border-gray-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 border-slate-200" />
+                            </div>
+
+
+
+                            <!-- Actions -->
+                            <div class="flex justify-end gap-3 pt-4">
+                                <button type="button"
+                                    class="px-4 py-2 rounded-lg bg-slate-100 hover:bg-slate-200 font-medium"
+                                    (click)="closeEMIModal()">
+                                    Cancel
+                                </button>
+                                <button type="submit" (click)="addEMI()"
+                                    class="px-4 py-2 rounded-lg bg-blue-600 text-white font-semibold hover:bg-blue-700">
+                                    Add
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                }
+
+                <!--Edit Categories Modal-->
+                @if(isEditModalOpen){
+                <div class="fixed inset-0 z-50 h-screen flex items-center justify-center bg-black/50 ">
+
+                    <div
+                        class="bg-white w-[90%] sm:w-[85%] md:w-full max-w-sm md:max-w-md  rounded-2xl shadow-xl p-4 sm:p-6 relative animate-scaleIn ">
+                        <!-- Close Button -->
+                        <button class="absolute top-4 right-4 text-slate-400 hover:text-slate-600"
+                            (click)="closeEMIModal()">
+                            ✕
+                        </button>
+
+                        <!-- Modal Header -->
+                        <h3 class="text-xl font-semibold text-slate-900 mb-6">
+                            Edit EMI
+                        </h3>
+
+                        <!-- Form -->
+                        <form class="space-y-4" [formGroup]="emiForm">
+                            <div>
+                                <label class="block text-sm font-medium text-slate-600 mb-1">
+                                    EMI Name
+                                </label>
+                                <input type="text" formControlName="name"
+                                    class="w-full px-4 py-2 border border-gray-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 border-slate-200" />
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-medium text-slate-600 mb-1">
+                                    Amount
+                                </label>
+                                <input type="text" formControlName="amount"
+                                    class="w-full px-4 py-2 border border-gray-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 border-slate-200" />
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-medium text-slate-600 mb-1">
+                                    Date
+                                </label>
+                                <input type="date" formControlName="date"
+                                    class="w-full px-4 py-2 border border-gray-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 border-slate-200" />
+                            </div>
+
+
+
+                            <!-- Actions -->
+                            <div class="flex justify-end gap-3 pt-4">
+                                <button type="button"
+                                    class="px-4 py-2 rounded-lg bg-slate-100 hover:bg-slate-200 font-medium"
+                                    (click)="closeEMIModal()">
+                                    Cancel
+                                </button>
+                                <button type="button" (click)="updateEMI()"
+                                    class="px-4 py-2 rounded-lg bg-blue-600 text-white font-semibold hover:bg-blue-700">
+                                    Update
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                }
+
+                <!-- Dashboard Hero -->
+                <div class="bg-white rounded-[2rem] p-6 md:p-10 shadow-sm border border-slate-100">
+                    <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-10">
+                        <div>
+                            <h3 class="text-3xl font-semibold text-slate-900 mb-1">Generate Reports</h3>
+                            <p class="text-slate-500">have a report of your financial budgets</p>
+                        </div>
+                    </div>
+
+                    <div class="space-y-10">
+
+                        <!-- Last Month Activities -->
+                        <section class="bg-white rounded-2xl border border-slate-100 p-6">
+                            <div class="flex items-center justify-center mb-8">
+                                <div class="mt-10">
+                                    <h4 class="text-xl font-semibold text-slate-400">⚠️ Page is working in progress you can explore rest of the sections</h4>
+                                </div>
+                            </div>
+
+                        </section>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</div>

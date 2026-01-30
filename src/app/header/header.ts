@@ -19,7 +19,25 @@ export class Header {
     return name ? name.charAt(0).toUpperCase() : '';
   });
   isSidebarOpen = signal(false);
+  showNotifications = false;
 
+  notifications = [
+    { message: 'New user Registered' },
+    { message: 'Payment received' },
+    { message: 'Server backup completed' },
+  ];
+
+  get notificationCount(): number {
+    return this.notifications.length;
+  }
+
+  toggleNotifications() {
+    this.showNotifications = !this.showNotifications;
+  }
+
+  removeNotification(index: number) {
+    this.notifications.splice(index, 1);
+  }
   profileBgColor = computed(() => {
     const colors = [
       'bg-red-600',
@@ -42,7 +60,10 @@ export class Header {
     return colors[Math.abs(hash) % colors.length];
   });
 
-  constructor(private authService: AuthService, public sideBar: SidebarService) {
+  constructor(
+    private authService: AuthService,
+    public sideBar: SidebarService,
+  ) {
     this.authService.getUser();
 
     effect(() => {

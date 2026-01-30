@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, signal } from '@angular/core';
 import { Router, RouterLink, RouterModule } from '@angular/router';
 import { SidebarService } from '../services/sidebar-service';
+import { AuthService } from '../services/auth-service/auth-service';
 
 @Component({
   selector: 'app-side-navigation',
@@ -12,7 +13,11 @@ import { SidebarService } from '../services/sidebar-service';
 export class SideNavigation {
   isSidebarOpen = signal(false);
 
-  constructor(private route: Router, public sideBar: SidebarService) {}
+  constructor(
+    private route: Router,
+    public sideBar: SidebarService,
+    public authService: AuthService,
+  ) {}
 
   toggleSidebar() {
     this.sideBar.toggle();
@@ -20,8 +25,9 @@ export class SideNavigation {
 
   logout() {
     if (confirm('Do you want to logout?')) {
-      localStorage.removeItem('token');
-      this.route.navigate(['/login'], { replaceUrl: true });
+      this.authService.logout().subscribe(() => {
+        this.route.navigate(['/login'], { replaceUrl: true });
+      });
     }
   }
 }

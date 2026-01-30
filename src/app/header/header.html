@@ -21,15 +21,55 @@
             </svg>
         </div>
 
-        <button class="p-2.5 bg-white rounded-xl shadow-sm text-slate-600 hover:text-blue-600 transition-colors"
-            [routerLink]="['/notifications']">
+        <button (click)="toggleNotifications()"
+            class="relative p-2.5 bg-white rounded-xl shadow-sm text-slate-600 hover:text-blue-600 transition-colors">
+            <span *ngIf="notificationCount > 0"
+                class="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-semibold rounded-full px-1.5 min-w-[18px] text-center">
+                {{ notificationCount }}
+            </span>
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                     d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
             </svg>
         </button>
-        <div alt="Profile" class="w-10 h-10 rounded-full text-xl font-semibold text-white shadow-sm
-         flex items-center justify-center" [ngClass]="profileBgColor()">
+
+        <div *ngIf="showNotifications"
+            class="absolute right-4 mt-52 w-[90vw] max-w-sm bg-white border border-slate-200 border-shadow rounded-xl shadow-lg z-50 md:w-80 ">
+            <div class="px-4 py-3 font-semibold border-b border-slate-300">
+                Notifications
+            </div>
+
+            <div *ngIf="notifications.length === 0" class="px-4 py-3 text-sm text-slate-500">
+                No notifications
+            </div>
+
+            <ul class="max-h-64 overflow-y-auto">
+                <li *ngFor="let n of notifications; let i = index"
+                    class="px-4 py-2 flex flex-end text-sm hover:bg-slate-100 cursor-pointer">
+                    <span class="flex-1">
+                        {{ n.message }}
+                    </span>
+
+                    <!-- Close button -->
+                    <button (click)="removeNotification(i)" class="text-slate-400 hover:text-red-500 transition"
+                        aria-label="Delete notification">
+                        ✕
+                    </button>
+                </li>
+            </ul>
+        </div>
+        <!--relative p-2.5 bg-white rounded-xl shadow-sm text-slate-600 hover:text-blue-600 transition-colors-->
+        <div alt="Profile" class="relative
+    flex items-center justify-center
+    rounded-full
+    font-semibold text-white shadow-sm
+    select-none
+
+    h-11 w-11 text-sm
+    sm:h-11 sm:w-11 sm:text-base
+    md:h-10 md:w-18 md:text-lg
+    lg:h-11 lg:w-11 lg:text-xl
+  " [ngClass]="profileBgColor()">
             {{ profileLetter() }}
         </div>
 
