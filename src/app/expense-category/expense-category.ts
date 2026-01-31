@@ -3,8 +3,7 @@ import { AfterViewInit, Component, inject, OnDestroy } from '@angular/core';
 import { Chart, DoughnutController, ArcElement, Tooltip, Legend } from 'chart.js';
 import { CategoryService } from '../services/category-service';
 import { ExpenseService } from '../services/expenses-service';
-import { combineLatest, Subscription } from 'rxjs';
-import { Category } from '../models/categories.model';
+import { Subscription } from 'rxjs';
 import { ExpenseModal } from '../models/expense.model';
 
 Chart.register(DoughnutController, ArcElement, Tooltip, Legend);
@@ -15,7 +14,6 @@ Chart.register(DoughnutController, ArcElement, Tooltip, Legend);
   styleUrl: './expense-category.scss',
 })
 export class ExpenseCategory implements AfterViewInit, OnDestroy {
-  private categoryService = inject(CategoryService);
   private expenseService = inject(ExpenseService);
 
   private chart!: Chart;
@@ -88,6 +86,7 @@ export class ExpenseCategory implements AfterViewInit, OnDestroy {
             data: this.data,
             backgroundColor: this.colors.slice(0, this.labels.length),
             borderWidth: 0,
+            hoverOffset: 4,
           },
         ],
       },

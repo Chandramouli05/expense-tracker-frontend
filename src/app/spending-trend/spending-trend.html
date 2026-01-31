@@ -1,0 +1,18 @@
+<div class="h-48 px-2 my-10">
+  <canvas #barChart></canvas>
+</div>
+
+<div class="mt-4 grid grid-cols-4 gap-3 text-sm">
+  <div
+    *ngFor="let label of labels; let i = index"
+    class="flex items-center justify-between gap-3"
+  >
+    <div class="flex items-center gap-2">
+      <span
+        class="w-3 h-3 rounded-sm"
+        [style.backgroundColor]="colors[i]"
+      ></span>
+      <span class="text-gray-600">{{ label }}</span>
+    </div>
+  </div>
+</div>

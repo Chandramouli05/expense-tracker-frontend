@@ -18,10 +18,11 @@ import { ExpenseService } from '../services/expenses-service';
 import { IncomeService } from '../services/income-service';
 import { SavingsService } from '../services/savings-service';
 import { ExpenseCategory } from '../expense-category/expense-category';
+import { SpendingTrend } from '../spending-trend/spending-trend';
 
 @Component({
   selector: 'app-dashboard',
-  imports: [Header, SideNavigation, CommonModule, RouterLink, ReactiveFormsModule, ExpenseCategory],
+  imports: [Header, SideNavigation, CommonModule, RouterLink, ReactiveFormsModule, ExpenseCategory, SpendingTrend],
   standalone: true,
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.scss',

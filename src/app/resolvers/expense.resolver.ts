@@ -12,7 +12,6 @@ export class ExpenseResolver implements Resolve<boolean> {
 
   resolve() {
     return forkJoin([
-        this.expenseService.getExpenses(), 
         this.expenseService.loadExpense(),
         this.categoryService.getCategories()
     ]).pipe(
