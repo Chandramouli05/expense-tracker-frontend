@@ -163,6 +163,24 @@
                             </div>
 
                             <div class="overflow-x-auto">
+                                <div class="flex justify-end mb-4">
+                                    <select class="px-5 py-2 border border-slate-300 rounded-lg text-sm"
+                                        (change)="onMonthChange($any($event.target).value)">
+                                        <option value="all">All Months</option>
+                                        <option value="1">January</option>
+                                        <option value="2">February</option>
+                                        <option value="3">March</option>
+                                        <option value="4">April</option>
+                                        <option value="5">May</option>
+                                        <option value="6">June</option>
+                                        <option value="7">July</option>
+                                        <option value="8">August</option>
+                                        <option value="9">September</option>
+                                        <option value="10">October</option>
+                                        <option value="11">November</option>
+                                        <option value="12">December</option>
+                                    </select>
+                                </div>
                                 <table class="w-full text-left">
                                     <thead>
                                         <tr class="text-xs font-medium text-slate-500 uppercase  tracking-wider">
@@ -175,7 +193,7 @@
                                         </tr>
                                     </thead>
                                     <tbody class="divide-y divide-slate-50">
-                                        @for(act of emiList(); track act._id; let i = $index){
+                                        @for(act of paginatedEMI(); track act._id; let i = $index){
                                         <tr class="group hover:bg-slate-50 transition-colors">
                                             <td class="py-6 pr-4 font-semibold text-slate-800">{{ i+1 }}</td>
                                             <td class="py-6 px-4 font-semibold">{{act.date.toString() | date:'dd MMM
@@ -199,7 +217,7 @@
                                                     <button
                                                         class="px-3 py-1 cus-btn-primary text-white rounded-lg font-semibold  transition-colors"
                                                         (click)="openEditModal(act)">
-                                                         <span><i class="bi bi-pencil-square"></i></span>
+                                                        <span><i class="bi bi-pencil-square"></i></span>
                                                     </button>
                                                     <button
                                                         class="px-4 py-1 cus-btn-secondary text-white rounded-lg font-semibold  transition-colors"
@@ -212,6 +230,37 @@
                                         }
                                     </tbody>
                                 </table>
+
+                                <!--PAGINATION-->
+
+                                <div class="flex items-center justify-between mt-6">
+                                    <p class="text-sm text-slate-400">
+                                        Page {{ currentPage() }} of {{ totalPages() }}
+                                    </p>
+
+                                    <div class="flex gap-2">
+                                        <button
+                                            class="px-3 py-1 rounded-lg cus-btn-primary hover:bg-slate-200 disabled:opacity-50"
+                                            (click)="prevPage()" [disabled]="currentPage() === 1">
+                                            Prev
+                                        </button>
+
+                                        @for(p of [].constructor(totalPages()); track i; let i = $index){
+                                        <button class="px-3 py-1 rounded-lg font-medium" [ngClass]="{
+        'cus-btn-secondary  text-white': currentPage() === i + 1,
+        'bg-slate-100 hover:bg-slate-200': currentPage() !== i + 1
+      }" (click)="goToPage(i + 1)">
+                                            {{ i + 1 }}
+                                        </button>
+                                        }
+
+                                        <button
+                                            class="px-3 py-1 rounded-lg cus-btn-primary hover:bg-slate-200 disabled:opacity-50"
+                                            (click)="nextPage()" [disabled]="currentPage() === totalPages()">
+                                            Next
+                                        </button>
+                                    </div>
+                                </div>
                             </div>
                         </section>
                     </div>

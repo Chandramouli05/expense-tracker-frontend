@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { SideNavigation } from '../side-navigation/side-navigation';
@@ -9,7 +9,7 @@ import { EMI } from '../models/emi.model';
 
 @Component({
   selector: 'app-reports',
-  imports: [CommonModule,  SideNavigation, Header, ReactiveFormsModule],
+  imports: [CommonModule, SideNavigation, Header, ReactiveFormsModule],
   templateUrl: './reports.html',
   styleUrl: './reports.scss',
 })
@@ -32,7 +32,53 @@ export class EMIManagement implements OnInit {
 
   emiList = this.emiService.emi;
 
+  currentPage = signal(1);
+  pageSize = 5;
+
+  selectedMonth = signal<string>('all');
+
+  filteredEMI = computed(() => {
+    const month = this.selectedMonth();
+    if (month === 'all') {
+      return this.emiList();
+    }
+
+    return this.emiList().filter((emi) => {
+      const emiMonth = new Date(emi.date).getMonth() + 1;
+      return emiMonth === Number(month);
+    });
+  });
+
+  paginatedEMI = computed(() => {
+    const start = (this.currentPage() - 1) * this.pageSize;
+    const end = start + this.pageSize;
+    return this.filteredEMI().slice(start, end);
+  });
+  
+  totalPages = computed(() => Math.ceil(this.filteredEMI().length / this.pageSize));
+
   ngOnInit() {}
+
+  onMonthChange(value: string) {
+    this.selectedMonth.set(value);
+    this.currentPage.set(1);
+  }
+
+  nextPage() {
+    if (this.currentPage() < this.totalPages()) {
+      this.currentPage.update((p) => p + 1);
+    }
+  }
+
+  prevPage() {
+    if (this.currentPage() > 1) {
+      this.currentPage.update((p) => p - 1);
+    }
+  }
+
+  goToPage(page: number) {
+    this.currentPage.set(page);
+  }
 
   openEMIModal() {
     this.isEMIModalOpen = true;

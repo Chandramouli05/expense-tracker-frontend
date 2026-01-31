@@ -63,6 +63,50 @@ export class Budgets implements OnInit {
   incomeList = this.incomeServices.income;
   savingList = this.savingServices.savings;
 
+  currentPage = signal(1);
+  pageSize = 5;
+
+  selectedMonth = signal<String>('all');
+
+  filteredIncome = computed(() => {
+    const month = this.selectedMonth();
+    if (month === 'all') {
+      return this.incomeList();
+    }
+
+    return this.incomeList().filter((inc) => {
+      const incMonth = new Date(inc.date).getMonth() + 1;
+      return incMonth === Number(month);
+    });
+  });
+
+  filteredSavings = computed(() => {
+    const month = this.selectedMonth();
+    if (month === 'all') {
+      return this.savingList();
+    }
+
+    return this.savingList().filter((savings) => {
+      const saveMonth = new Date(savings.date).getMonth() + 1;
+      return saveMonth === Number(month);
+    });
+  });
+
+  paginatedIncome = computed(() => {
+    const start = (this.currentPage() - 1) * this.pageSize;
+    const end = start + this.pageSize;
+    return this.filteredIncome().slice(start, end);
+  });
+
+  paginatedSavings = computed(() => {
+    const start = (this.currentPage() - 1) * this.pageSize;
+    const end = start + this.pageSize;
+    return this.filteredSavings().slice(start, end);
+  });
+
+  savingsTotalPages = computed(() => Math.ceil(this.filteredSavings().length / this.pageSize));
+  incomeTotalPages = computed(() => Math.ceil(this.filteredIncome().length / this.pageSize));
+
   dashboardExp = computed(() => this.expense().slice(0, 4));
 
   totalExpenseAmount = computed(() =>
@@ -84,6 +128,31 @@ export class Budgets implements OnInit {
   ngOnInit() {
     this.incomeList();
     this.savingList();
+  }
+
+  onMonthChange(value: string) {
+    this.selectedMonth.set(value);
+    this.currentPage.set(1);
+  }
+
+  nextPage() {
+    if (this.currentPage() < this.incomeTotalPages()) {
+      this.currentPage.update((p) => p + 1);
+    }
+
+    if (this.currentPage() < this.savingsTotalPages()) {
+      this.currentPage.update((p) => p + 1);
+    }
+  }
+
+  prevPage() {
+    if (this.currentPage() > 1) {
+      this.currentPage.update((p) => p - 1);
+    }
+  }
+
+  goToPage(page: number) {
+    this.currentPage.set(page);
   }
 
   handleManageSubmit() {

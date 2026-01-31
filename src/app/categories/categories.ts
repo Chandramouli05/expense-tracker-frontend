@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { CategoryService } from '../services/category-service';
 import { Category } from '../models/categories.model';
 import { CommonModule } from '@angular/common';
@@ -9,7 +9,7 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 
 @Component({
   selector: 'app-categories',
-  imports: [CommonModule,  SideNavigation, Header, ReactiveFormsModule],
+  imports: [CommonModule, SideNavigation, Header, ReactiveFormsModule],
   standalone: true,
   templateUrl: './categories.html',
   styleUrl: './categories.scss',
@@ -35,9 +35,53 @@ export class Categories implements OnInit {
 
   categories = this.categoryService.category;
 
-  ngOnInit() {
+  currentPage = signal(1);
+  pageSize = 5;
 
+  selectedMonth = signal<string>('all');
+
+  filteredCategories = computed(() => {
+    const month = this.selectedMonth();
+    if (month === 'all') {
+      return this.categories();
+    }
+
+    return this.categories().filter((cat) => {
+      const cateMonth = new Date(cat.date).getMonth() + 1;
+      return cateMonth === Number(month);
+    });
+  });
+
+  paginatedCategories = computed(() => {
+    const start = (this.currentPage() - 1) * this.pageSize;
+    const end = start + this.pageSize;
+    return this.filteredCategories().slice(start, end);
+  });
+
+  totalPages = computed(() => Math.ceil(this.filteredCategories().length / this.pageSize));
+
+  ngOnInit() {
     this.updateCategory();
+  }
+
+  onMonthChange(value: string) {
+    this.selectedMonth.set(value);
+    this.currentPage.set(1);
+  }
+
+  nextPage() {
+    if (this.currentPage() < this.totalPages()) {
+      this.currentPage.update((p) => p + 1);
+    }
+  }
+
+  prevPage() {
+    if (this.currentPage() > 1) {
+      this.currentPage.update((p) => p - 1);
+    }
+  }
+  goToPage(page: number) {
+    this.currentPage.set(page);
   }
 
   addCategory() {
@@ -78,7 +122,7 @@ export class Categories implements OnInit {
       icon: category.icon,
       date: category.date,
     });
-    
+
     document.body.style.overflow = 'hidden';
   }
 

@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { SideNavigation } from '../side-navigation/side-navigation';
 import { Header } from '../header/header';
@@ -42,8 +42,55 @@ export class Expenses implements OnInit {
   expenses = this.expService.expenses;
   category = this.catService.category;
 
+  currentPage = signal(1);
+  pageSize = 5;
+
+  selectedMonth = signal<string>('all');
+
+  filteredExpenses = computed(() => {
+    const month = this.selectedMonth();
+    if (month === 'all') {
+      return this.expenses();
+    }
+
+    return this.expenses().filter((exp) => {
+      const expMonth = new Date(exp.date).getMonth() + 1;
+      return expMonth === Number(month);
+    });
+  });
+
+  paginatedExpenses = computed(() => {
+    const start = (this.currentPage() - 1) * this.pageSize;
+    const end = start + this.pageSize;
+    return this.filteredExpenses().slice(start, end);
+  });
+
+  totalPages = computed(() => Math.ceil(this.filteredExpenses().length / this.pageSize));
+
   ngOnInit() {
     this.updateExpense();
+  }
+
+  onMonthChange(value: string) {
+    this.selectedMonth.set(value);
+    this.currentPage.set(1);
+  }
+
+  
+  nextPage() {
+    if (this.currentPage() < this.totalPages()) {
+      this.currentPage.update((p) => p + 1);
+    }
+  }
+
+  prevPage() {
+    if (this.currentPage() > 1) {
+      this.currentPage.update((p) => p - 1);
+    }
+  }
+
+  goToPage(page: number) {
+    this.currentPage.set(page);
   }
 
   openExpenseModal() {
@@ -80,7 +127,6 @@ export class Expenses implements OnInit {
         console.error(err);
       },
     });
-   
   }
 
   deleteExpenses(id: string) {
