@@ -1,11 +1,11 @@
 import { CommonModule } from '@angular/common';
 import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { RouterLink } from '@angular/router';
 import { SideNavigation } from '../side-navigation/side-navigation';
 import { Header } from '../header/header';
 import { EMIService } from '../services/emi-service';
 import { EMI } from '../models/emi.model';
+import { NotificationService } from '../services/notification-service';
 
 @Component({
   selector: 'app-reports',
@@ -29,6 +29,7 @@ export class EMIManagement implements OnInit {
   }
 
   private emiService = inject(EMIService);
+  private notificationService = inject(NotificationService);
 
   emiList = this.emiService.emi;
 
@@ -54,7 +55,7 @@ export class EMIManagement implements OnInit {
     const end = start + this.pageSize;
     return this.filteredEMI().slice(start, end);
   });
-  
+
   totalPages = computed(() => Math.ceil(this.filteredEMI().length / this.pageSize));
 
   ngOnInit() {}
@@ -113,10 +114,14 @@ export class EMIManagement implements OnInit {
 
     this.emiService.updateEMI(this.selectedEMIid, this.emiForm.value).subscribe({
       next: () => {
+        this.notificationService.add('EMI updated successfully 💳');
         this.closeEMIModal();
         this.emiForm.reset();
       },
-      error: (err) => console.error(err),
+      error: (err) => {
+        this.notificationService.add('Failed to update EMI ❌ ');
+        console.error(err);
+      },
     });
   }
 
@@ -125,17 +130,32 @@ export class EMIManagement implements OnInit {
 
     this.emiService.createEMI(this.emiForm.value).subscribe({
       next: () => {
+        this.notificationService.add('EMI added successfully 💳');
         this.emiForm.reset();
         this.closeEMIModal();
       },
 
-      error: (err) => console.log(err),
+      error: (err) => {
+        this.notificationService.add('Failed to add EMI ❌');
+        console.log(err);
+      },
     });
   }
 
   deleteEMI(id: string) {
     if (!confirm('Are you sure?')) return;
-    this.emiService.deleteEMI(id).subscribe();
+    this.emiService.deleteEMI(id).subscribe({
+      next: () => {
+        this.notificationService.add('EMI Deleted 🗑️ ');
+        this.emiForm.reset();
+        this.closeEMIModal();
+      },
+
+      error: (err) => {
+        this.notificationService.add('Failed to delete EMI ❌');
+        console.log(err);
+      },
+    });
   }
 
   getEMIstatus(date: string | Date) {

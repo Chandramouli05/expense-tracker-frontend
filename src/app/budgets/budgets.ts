@@ -17,6 +17,7 @@ import { IncomeService } from '../services/income-service';
 import { SavingsService } from '../services/savings-service';
 import { Income } from '../models/income.model';
 import { Savings } from '../models/savings.model';
+import { NotificationService } from '../services/notification-service';
 
 @Component({
   selector: 'app-budgets',
@@ -56,6 +57,7 @@ export class Budgets implements OnInit {
   private expenseService = inject(ExpenseService);
   private incomeServices = inject(IncomeService);
   private savingServices = inject(SavingsService);
+  private notificationServices = inject(NotificationService);
 
   categories = this.categoryService.category;
   emiList = this.emiService.emi;
@@ -172,7 +174,14 @@ export class Budgets implements OnInit {
         date: formValue.incomeDate,
       } as Income;
 
-      this.incomeServices.createIncome(newIncome).subscribe();
+      this.incomeServices.createIncome(newIncome).subscribe({
+        next: () => {
+          this.notificationServices.add('Income Created Successfully 💸');
+        },
+        error: (err) => {
+          (this.notificationServices.add('Failed to update Income ❌'), console.error(err));
+        },
+      });
 
       console.log('Income added:', newIncome);
       console.log('Total Income:', this.totalIncomeAmount());
@@ -193,7 +202,14 @@ export class Budgets implements OnInit {
       } as Savings;
 
       // ✅ CORRECT: Update the signal, not the getter
-      this.savingServices.createSavings(newSavings).subscribe();
+      this.savingServices.createSavings(newSavings).subscribe({
+        next: () => {
+          this.notificationServices.add('Savings Created Successfully 🐖');
+        },
+        error: (err) => {
+          (this.notificationServices.add('Failed to update savings ❌'), console.error(err));
+        },
+      });
     }
 
     // Close modal and reset form
@@ -213,10 +229,14 @@ export class Budgets implements OnInit {
 
     this.incomeServices.updateIncome(updatedIncome, this.selectedIncomeId).subscribe({
       next: () => {
+        this.notificationServices.add('Income updated successfully 💸');
         this.manageForm.reset();
         this.closeManageModal();
       },
-      error: (err) => console.error(err),
+      error: (err) => {
+        this.notificationServices.add('Failed to update Income ❌ ');
+        console.error(err);
+      },
     });
 
     const updatedSaving: Savings = {
@@ -228,10 +248,14 @@ export class Budgets implements OnInit {
 
     this.savingServices.updateSavings(updatedSaving, this.selectedSavingsId).subscribe({
       next: () => {
+        this.notificationServices.add('Savings updated Successfully 🐖');
         this.manageForm.reset();
         this.closeManageModal();
       },
-      error: (err) => console.error(err),
+      error: (err) => {
+        this.notificationServices.add('Failed to update Savings ❌ ');
+        console.error(err);
+      },
     });
   }
 
@@ -309,12 +333,26 @@ export class Budgets implements OnInit {
 
   deleteIncome(_id: string) {
     if (!confirm('Are you sure want to delete this Income?')) return;
-    this.incomeServices.deleteIncome(_id).subscribe();
+    this.incomeServices.deleteIncome(_id).subscribe({
+      next: () => {
+        this.notificationServices.add('Income deleted 🗑️');
+      },
+      error: () => {
+        this.notificationServices.add('Failed to delete Income ❌');
+      },
+    });
   }
 
   deleteSavings(_id: string) {
     if (!confirm('Are you sure want to delete this Income?')) return;
-    this.savingServices.deleteSavings(_id).subscribe();
+    this.savingServices.deleteSavings(_id).subscribe({
+      next: () => {
+        this.notificationServices.add('Savings deleted 🗑️');
+      },
+      error: () => {
+        this.notificationServices.add('Failed to delete Savings ❌');
+      },
+    });
   }
 
   getEMIstatus(date: string | Date) {

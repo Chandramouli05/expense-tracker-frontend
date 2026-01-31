@@ -7,6 +7,7 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { ExpenseService } from '../services/expenses-service';
 import { CategoryService } from '../services/category-service';
 import { ExpenseModal } from '../models/expense.model';
+import { NotificationService } from '../services/notification-service';
 
 @Component({
   selector: 'app-expenses',
@@ -38,6 +39,7 @@ export class Expenses implements OnInit {
 
   private expService = inject(ExpenseService);
   private catService = inject(CategoryService);
+  private notificationService = inject(NotificationService);
 
   expenses = this.expService.expenses;
   category = this.catService.category;
@@ -76,7 +78,6 @@ export class Expenses implements OnInit {
     this.currentPage.set(1);
   }
 
-  
   nextPage() {
     if (this.currentPage() < this.totalPages()) {
       this.currentPage.update((p) => p + 1);
@@ -110,20 +111,26 @@ export class Expenses implements OnInit {
 
     this.expService.createExpenses(this.expenseForm.value).subscribe({
       next: () => {
+        this.notificationService.add('Expense added successfully 💸');
         this.expenseForm.reset();
         this.closeExpenseModal();
       },
-      error: (err) => console.error(err),
+      error: (err) => {
+        this.notificationService.add('Failed to add expense ❌ ');
+        console.error(err);
+      },
     });
   }
 
   updateExpense() {
     this.expService.updateExpenses(this.selectedExpenseId, this.expenseForm.value).subscribe({
       next: () => {
+        this.notificationService.add('Expense updated successfully 💸');
         this.expenseForm.reset();
         this.closeExpenseModal();
       },
       error: (err) => {
+        this.notificationService.add('Failed to update expense ❌ ');
         console.error(err);
       },
     });
@@ -131,7 +138,14 @@ export class Expenses implements OnInit {
 
   deleteExpenses(id: string) {
     if (!confirm('Are you sure want to delete this expenses?')) return;
-    this.expService.deleteExpenses(id).subscribe();
+    this.expService.deleteExpenses(id).subscribe({
+      next: () => {
+        this.notificationService.add('Expense deleted 🗑️');
+      },
+      error: () => {
+        this.notificationService.add('Failed to delete expense ❌');
+      },
+    });
   }
 
   openEditModal(exp: ExpenseModal) {

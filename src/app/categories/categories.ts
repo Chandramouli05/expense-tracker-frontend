@@ -6,6 +6,7 @@ import { Router, RouterLink } from '@angular/router';
 import { SideNavigation } from '../side-navigation/side-navigation';
 import { Header } from '../header/header';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { NotificationService } from '../services/notification-service';
 
 @Component({
   selector: 'app-categories',
@@ -32,6 +33,7 @@ export class Categories implements OnInit {
   }
 
   private categoryService = inject(CategoryService);
+  private notificationService = inject(NotificationService);
 
   categories = this.categoryService.category;
 
@@ -89,16 +91,27 @@ export class Categories implements OnInit {
 
     this.categoryService.postCategories(this.categoryForm.value).subscribe({
       next: () => {
+        this.notificationService.add('Category added successfully 💸');
         this.categoryForm.reset();
         this.closeCategoryModal();
       },
-      error: (err) => console.error(err),
+      error: (err) => {
+        this.notificationService.add('Failed to add category ❌');
+        console.error(err);
+      },
     });
   }
 
   deleteCategory(id: string) {
     if (!confirm('Are you sure?')) return;
-    this.categoryService.deleteCategories(id).subscribe();
+    this.categoryService.deleteCategories(id).subscribe({
+      next: () => {
+        this.notificationService.add('Category deleted 🗑️');
+      },
+      error: () => {
+        this.notificationService.add('Failed to delete category ❌');
+      },
+    });
   }
 
   openCategoryModal() {
@@ -131,10 +144,14 @@ export class Categories implements OnInit {
       .updateCategories(this.selectedCategoryId, this.categoryForm.value)
       .subscribe({
         next: () => {
+          this.notificationService.add('Category updated successfully 💸');
           this.categoryForm.reset();
           this.closeCategoryModal();
         },
-        error: (err) => console.error(err),
+        error: (err) => {
+          this.notificationService.add('Failed to update category ❌ ');
+          console.error(err);
+        },
       });
 
     this.categoryService.getCategories().subscribe();

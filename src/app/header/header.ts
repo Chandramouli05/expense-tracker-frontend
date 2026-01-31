@@ -1,8 +1,9 @@
-import { Component, computed, effect, OnInit, signal } from '@angular/core';
+import { Component, computed, effect, inject, OnInit, signal } from '@angular/core';
 import { SidebarService } from '../services/sidebar-service';
 import { AuthService } from '../services/auth-service/auth-service';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
+import { NotificationService } from '../services/notification-service';
 
 @Component({
   selector: 'app-header',
@@ -21,23 +22,19 @@ export class Header {
   isSidebarOpen = signal(false);
   showNotifications = false;
 
-  notifications = [
-    { message: 'New user Registered' },
-    { message: 'Payment received' },
-    { message: 'Server backup completed' },
-  ];
+  private notificationService = inject(NotificationService);
 
-  get notificationCount(): number {
-    return this.notifications.length;
-  }
+  notifications = this.notificationService.notifications;
+  notificationCount = computed(() => this.notifications().length);
 
   toggleNotifications() {
     this.showNotifications = !this.showNotifications;
   }
 
   removeNotification(index: number) {
-    this.notifications.splice(index, 1);
+    this.notificationService.remove(index);
   }
+  
   profileBgColor = computed(() => {
     const colors = [
       'bg-red-600',
