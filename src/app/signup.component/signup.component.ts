@@ -78,7 +78,7 @@ export class SignupComponent {
         setTimeout(() => {
           this.success.set(false);
           this.route.navigate(['/login']);
-        },6000);
+        },4000);
       },
 
       error: (err) => {

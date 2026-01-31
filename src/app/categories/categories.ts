@@ -140,20 +140,23 @@ export class Categories implements OnInit {
   }
 
   updateCategory() {
-    this.categoryService
-      .updateCategories(this.selectedCategoryId, this.categoryForm.value)
-      .subscribe({
-        next: () => {
-          this.notificationService.add('Category updated successfully 💸');
-          this.categoryForm.reset();
-          this.closeCategoryModal();
-        },
-        error: (err) => {
-          this.notificationService.add('Failed to update category ❌ ');
-          console.error(err);
-        },
-      });
+     if (!this.selectedCategoryId) {
+    console.error('Category ID is missing');
+    return;
+  }
 
-    this.categoryService.getCategories().subscribe();
+  this.categoryService
+    .updateCategories(this.selectedCategoryId, this.categoryForm.value)
+    .subscribe({
+      next: () => {
+        this.notificationService.add('Category updated successfully ✅');
+        this.categoryForm.reset();
+        this.closeCategoryModal();
+      },
+      error: (err) => {
+        console.error(err);
+        this.notificationService.add('Failed to update category ❌');
+      },
+    });
   }
 }

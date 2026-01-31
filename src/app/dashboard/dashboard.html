@@ -158,7 +158,8 @@
                                 <div
                                     class="bg-[#E7F9F3] p-6 rounded-[0.5rem] relative overflow-hidden group hover:shadow-lg hover:shadow-emerald-100/50 transition-all cursor-pointer">
                                     <div class="relative z-10">
-                                        <h5 class="text-2xl font-semibold text-slate-900 mb-1">{{totalBalanceAmount() | currency:'INR'}}</h5>
+                                        <h5 class="text-2xl font-semibold text-slate-900 mb-1">{{totalBalanceAmount() |
+                                            currency:'INR'}}</h5>
                                         <p class="text-slate-500 font-medium">Total Balance</p>
                                     </div>
                                     <img src="assets/images/total_balance.png?height=60&width=60"
@@ -219,6 +220,14 @@
                                             [routerLink]="['/categories']">View All</button>
                                     </div>
                                     <ul class="space-y-5">
+                                        <li *ngIf="categories().length ===0">
+                                            <div colspan="5"
+                                                class="py-8 text-center font-medium text-lg text-slate-400">
+                                                <p class="text-blue-300">No Categories found.</p>
+                                                <p class="text-sm font-regular">Click "Categories" to add new entries.
+                                                </p>
+                                            </div>
+                                        </li>
                                         <li *ngFor="let cat of categories() | slice:0:5"
                                             class="flex items-center gap-3 text-lg font-medium text-slate-700 hover:text-blue-600 transition-colors cursor-pointer">
                                             <span>{{ cat.icon }}</span>
@@ -235,6 +244,12 @@
                                             routerLink="/emi-management">View All</button>
                                     </div>
                                     <div class="space-y-5">
+                                        <div *ngIf="emiList().length === 0"
+                                            class="py-8 text-center font-medium text-lg text-slate-400">
+                                            <p class="text-blue-300">No EMI found.</p>
+                                            <p class="text-sm font-regular">Click "EMI Management" to add new entries.
+                                            </p>
+                                        </div>
                                         <div *ngFor="let emi of emiList() | slice:0:4"
                                             class="flex items-center justify-between gap-4">
                                             <div class="flex-1 min-w-0">
@@ -264,7 +279,7 @@
                             <div class="grid grid-cols-1 lg:grid-cols-1 md:grid-cols-2 gap-6  xl:grid-cols-2 gap-3">
                                 <div class="bg-white rounded-2xl border border-slate-100 p-6">
                                     <h4 class="text-xl font-semibold text-slate-400 mb-6">Expense by Category</h4>
-                                     <app-expense-category></app-expense-category>
+                                    <app-expense-category></app-expense-category>
                                 </div>
 
                                 <div class="bg-white rounded-2xl border border-slate-100 p-6">
@@ -297,8 +312,16 @@
                                         </tr>
                                     </thead>
                                     <tbody class="divide-y divide-slate-50">
+                                        
+                                        <tr *ngIf="dashboardExp().length === 0" class="group hover:bg-slate-50 transition-colors">
+                                            <td colspan="5" class="py-8 text-center font-medium text-lg text-slate-400">
+                                                <p class="text-green-400">No Expense records found.</p>
+                                                <p class="text-sm font-regular">Click "Expenses" to add new entries.</p>
+                                            </td>
+                                        </tr>
                                         @for (act of dashboardExp(); track act._id) {
                                         <tr class="group hover:bg-slate-50 transition-colors">
+
                                             <td class="py-6 pr-4 font-semibold text-slate-800">
                                                 {{ act.title }}
                                             </td>

@@ -193,6 +193,13 @@
                                         </tr>
                                     </thead>
                                     <tbody class="divide-y divide-slate-50">
+                                        <tr *ngIf="paginatedEMI().length === 0"
+                                            class="group hover:bg-slate-50 transition-colors">
+                                            <td colspan="10" class="py-8 text-center font-medium text-lg text-slate-400">
+                                                <p class="text-blue-300">No EMI records found.</p>
+                                                <p class="text-sm font-regular">Click "Add EMI" to add new entries.</p>
+                                            </td>
+                                        </tr>
                                         @for(act of paginatedEMI(); track act._id; let i = $index){
                                         <tr class="group hover:bg-slate-50 transition-colors">
                                             <td class="py-6 pr-4 font-semibold text-slate-800">{{ i+1 }}</td>

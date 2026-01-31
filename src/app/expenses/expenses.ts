@@ -123,6 +123,10 @@ export class Expenses implements OnInit {
   }
 
   updateExpense() {
+    if (!this.selectedExpenseId) {
+      console.error('Expense ID is missing');
+      return;
+    }
     this.expService.updateExpenses(this.selectedExpenseId, this.expenseForm.value).subscribe({
       next: () => {
         this.notificationService.add('Expense updated successfully 💸');

@@ -261,9 +261,16 @@
                                         </tr>
                                     </thead>
                                     <tbody class="divide-y divide-slate-50">
+                                        <tr class="group hover:bg-slate-50 transition-colors">
+                                            <td *ngIf="paginatedExpenses().length === 0" colspan="10" 
+                                                class="py-8 text-center font-medium text-lg text-slate-400">
+                                                <p class="text-blue-300">No Expense records found.</p>
+                                                <p class="text-sm font-regular">Click "Add Expense" to add new entries.</p>
+                                            </td>
+                                        </tr>
                                         @for(act of paginatedExpenses(); track act._id; let i = $index){
                                         <tr class="group hover:bg-slate-50 transition-colors">
-
+                                        
                                             <td class="py-6 pr-4 font-semibold  text-slate-800">{{ (currentPage() - 1) *
                                                 pageSize + i + 1 }}</td>
                                             <td class="py-6 pr-4 font-semibold text-slate-800">{{ act.title }}</td>
