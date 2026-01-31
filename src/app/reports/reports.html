@@ -136,10 +136,10 @@
                 }
 
                 <!-- Dashboard Hero -->
-                <div class="bg-white rounded-[2rem] p-6 md:p-10 shadow-sm border border-slate-100">
+                <div class="bg-white rounded-[2rem] p-6 md:p-10border border-slate-100">
                     <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-10">
                         <div>
-                            <h3 class="text-3xl font-semibold text-slate-900 mb-1">Generate Reports</h3>
+                            <h3 class="text-3xl font-semibold text-slate-900 mb-1">View Reports</h3>
                             <p class="text-slate-500">have a report of your financial budgets</p>
                         </div>
                     </div>
@@ -147,13 +147,32 @@
                     <div class="space-y-10">
 
                         <!-- Last Month Activities -->
-                        <section class="bg-white rounded-2xl border border-slate-100 p-6">
-                            <div class="flex items-center justify-center mb-8">
-                                <div class="mt-10">
-                                    <h4 class="text-xl font-semibold text-slate-400">⚠️ Page is working in progress you can explore rest of the sections</h4>
-                                </div>
-                            </div>
+                        <section class="bg-white rounded-2xl border border-slate-100 p-4 sm:p-6">
+                            <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6 mb-8">
 
+                                <div class="h-full shadow-sm rounded-[1rem] border border-slate-100 p-4 flex flex-col">
+                                    <h3 class="mb-4 text-lg sm:text-xl font-medium text-gray-400">Expense by Category
+                                    </h3>
+                                    <app-expense-category *ngIf="isExpenseDataLoad"></app-expense-category>
+                                    <h3 *ngIf="!isExpenseDataLoad" class="text-xl text-center text-gray-200">No Data
+                                        Found</h3>
+                                </div>
+
+                                <div class="h-full shadow-sm rounded-[1rem] border border-slate-100 p-4 flex flex-col">
+                                    <h3 class="mb-4 text-lg sm:text-xl font-medium text-gray-400">Spending Trend</h3>
+                                    <app-spending-trend *ngIf="isSpendingTrendLoad"></app-spending-trend>
+                                    <h3 *ngIf="!isSpendingTrendLoad" class="text-xl text-center text-gray-200">No Data
+                                        Found</h3>
+                                </div>
+
+                                <div class="h-full shadow-sm rounded-[1rem] border border-slate-100 p-4 flex flex-col">
+                                    <h3 class="mb-4 text-lg sm:text-xl font-medium text-gray-400">Savings Average</h3>
+                                    <app-savings-average *ngIf="isSavingsAverageLoad"></app-savings-average>
+                                    <h3 *ngIf="!isSavingsAverageLoad" class="text-xl text-center text-gray-200">No Data
+                                        Found</h3>
+                                </div>
+
+                            </div>
                         </section>
                     </div>
                 </div>

@@ -1,38 +1,86 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  inject,
+  signal,
+  AfterViewInit
+} from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { SideNavigation } from '../side-navigation/side-navigation';
 import { Header } from '../header/header';
 import { EMI } from '../models/emi.model';
 import { EMIService } from '../services/emi-service';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import {
+  FormBuilder,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators
+} from '@angular/forms';
+import { ExpenseCategory } from '../expense-category/expense-category';
+import { SpendingTrend } from '../spending-trend/spending-trend';
+import { SavingsAverage } from '../savings-average/savings-average';
 
 @Component({
   selector: 'app-reports',
-  imports: [CommonModule, RouterLink, SideNavigation, Header,ReactiveFormsModule],
+  standalone: true,
+  imports: [
+    CommonModule,
+    RouterLink,
+    SideNavigation,
+    Header,
+    ReactiveFormsModule,
+    ExpenseCategory,
+    SpendingTrend,
+    SavingsAverage
+  ],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './reports.html',
-  styleUrl: './reports.scss',
+  styleUrl: './reports.scss'
 })
-export class Reports {
- emiForm!: FormGroup;
+export class Reports implements AfterViewInit {
+  emiForm!: FormGroup;
   selectedEMIid!: string;
+
   isSidebarOpen = signal(false);
   isEMIModalOpen = false;
   isEditModalOpen = false;
 
-  constructor(private fb: FormBuilder) {
-    this.emiForm = this.fb.group({
-      name: ['', [Validators.required]],
-      date: ['', [Validators.required]],
-      amount: ['', [Validators.required]],
-    });
-  }
+  // ⛔ start false — render charts only after view init
+  isExpenseDataLoad = false;
+  isSpendingTrendLoad = false;
+  isSavingsAverageLoad = false;
 
   private emiService = inject(EMIService);
 
   emiList = this.emiService.emi;
 
-  ngOnInit() {}
+  constructor(
+    private fb: FormBuilder,
+    private cdr: ChangeDetectorRef
+  ) {
+    this.emiForm = this.fb.group({
+      name: ['', Validators.required],
+      date: ['', Validators.required],
+      amount: ['', Validators.required]
+    });
+  }
+
+  // 🔑 KEY FIX
+  ngAfterViewInit(): void {
+    setTimeout(() => {
+      this.isExpenseDataLoad = true;
+      this.isSpendingTrendLoad = true;
+      this.isSavingsAverageLoad = true;
+
+      // Force chart libraries to recalc layout
+      window.dispatchEvent(new Event('resize'));
+
+      // Notify Angular (OnPush)
+      this.cdr.markForCheck();
+    });
+  }
 
   openEMIModal() {
     this.isEMIModalOpen = true;
@@ -49,14 +97,13 @@ export class Reports {
 
   openEditModal(emi: EMI) {
     this.selectedEMIid = emi._id;
-
     this.isEMIModalOpen = false;
     this.isEditModalOpen = true;
 
     this.emiForm.patchValue({
       name: emi.name,
       date: emi.date,
-      amount: emi.amount,
+      amount: emi.amount
     });
 
     document.body.style.overflow = 'hidden';
@@ -66,11 +113,8 @@ export class Reports {
     if (!this.selectedEMIid || this.emiForm.invalid) return;
 
     this.emiService.updateEMI(this.selectedEMIid, this.emiForm.value).subscribe({
-      next: () => {
-        this.closeEMIModal();
-        this.emiForm.reset();
-      },
-      error: (err) => console.error(err),
+      next: () => this.closeEMIModal(),
+      error: err => console.error(err)
     });
   }
 
@@ -78,12 +122,8 @@ export class Reports {
     if (this.emiForm.invalid) return;
 
     this.emiService.createEMI(this.emiForm.value).subscribe({
-      next: () => {
-        this.emiForm.reset();
-        this.closeEMIModal();
-      },
-
-      error: (err) => console.log(err),
+      next: () => this.closeEMIModal(),
+      error: err => console.error(err)
     });
   }
 
@@ -99,7 +139,9 @@ export class Reports {
     today.setHours(0, 0, 0, 0);
     emiDate.setHours(0, 0, 0, 0);
 
-    const diffDays = Math.ceil((emiDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
+    const diffDays = Math.ceil(
+      (emiDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24)
+    );
 
     if (diffDays < 0) {
       return { text: 'OverDue', class: 'bg-red-100 text-red-700' };
@@ -107,7 +149,6 @@ export class Reports {
     if (diffDays <= 5) {
       return { text: 'Due Soon', class: 'bg-yellow-100 text-yellow-700' };
     }
-
     if (diffDays <= 25) {
       return { text: 'Upcoming', class: 'bg-green-100 text-green-700' };
     }

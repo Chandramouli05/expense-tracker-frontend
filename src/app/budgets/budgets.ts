@@ -293,11 +293,13 @@ export class Budgets implements OnInit {
   }
 
   openManageModal() {
+    this.manageForm.reset();
     this.isManageModalOpen = true;
     document.body.style.overflow = 'hidden';
   }
 
   closeManageModal() {
+    this.manageForm.reset();
     this.isManageModalOpen = false;
     this.isEditModalOpen = false;
     document.body.style.overflow = 'auto';
