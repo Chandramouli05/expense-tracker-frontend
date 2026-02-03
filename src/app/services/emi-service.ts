@@ -1,7 +1,7 @@
 import { Injectable, signal } from '@angular/core';
 import { environment } from '../../environments/environment.development';
 import { EMI } from '../models/emi.model';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpResponse } from '@angular/common/http';
 import { map, tap } from 'rxjs';
 
 @Injectable({
@@ -9,6 +9,7 @@ import { map, tap } from 'rxjs';
 })
 export class EMIService {
   private apiLink = environment.apiUrl + '/emi';
+  private reportApi = environment.apiUrl + '/reports/download';
   private emiSignal = signal<EMI[]>([]);
   readonly emi = this.emiSignal.asReadonly();
 
@@ -21,22 +22,19 @@ export class EMIService {
           this.emiSignal.set(emis);
         },
         error: (err) => this.emiSignal.set(err),
-      })
+      }),
     );
   }
 
   getStatusDate() {
-    return this.http
-      .get<EMI[]>(`${this.apiLink}`)
-      .pipe(map((res) => res.map((val) => val.date)))
-
+    return this.http.get<EMI[]>(`${this.apiLink}`).pipe(map((res) => res.map((val) => val.date)));
   }
 
   createEMI(emi: EMI) {
     return this.http.post<EMI>(`${this.apiLink}`, emi).pipe(
       tap((newEMI) => {
         this.emiSignal.update((prev) => [...prev, newEMI]);
-      })
+      }),
     );
   }
 
@@ -44,9 +42,9 @@ export class EMIService {
     return this.http.put<EMI>(`${this.apiLink}/${_id}`, emi).pipe(
       tap((updatedEMI) => {
         this.emiSignal.update((prev) =>
-          prev.map((e) => (e._id === updatedEMI._id ? updatedEMI : e))
+          prev.map((e) => (e._id === updatedEMI._id ? updatedEMI : e)),
         );
-      })
+      }),
     );
   }
 
@@ -54,7 +52,23 @@ export class EMIService {
     return this.http.delete<{ message: string; _id: string }>(`${this.apiLink}/${_id}`).pipe(
       tap(() => {
         this.emiSignal.update((prev) => prev.filter((cat) => cat._id !== _id));
-      })
+      }),
     );
+  }
+
+  downloadReport(params: {
+    type: 'categories' | 'expenses' | 'income' | 'savings' | 'all';
+    month: string | number;
+    format: 'pdf' | 'csv';
+  }) {
+    return this.http.get(this.reportApi, {
+      params: {
+        type: params.type,
+        month: params.month,
+        format: params.format,
+      },
+      responseType: 'blob',
+      observe: 'response',
+    });
   }
 }

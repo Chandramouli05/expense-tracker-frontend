@@ -5,19 +5,16 @@ import {
   Component,
   inject,
   signal,
-  AfterViewInit
+  AfterViewInit,
 } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+
 import { SideNavigation } from '../side-navigation/side-navigation';
 import { Header } from '../header/header';
-import { EMI } from '../models/emi.model';
 import { EMIService } from '../services/emi-service';
-import {
-  FormBuilder,
-  FormGroup,
-  ReactiveFormsModule,
-  Validators
-} from '@angular/forms';
+import { EMI } from '../models/emi.model';
+
 import { ExpenseCategory } from '../expense-category/expense-category';
 import { SpendingTrend } from '../spending-trend/spending-trend';
 import { SavingsAverage } from '../savings-average/savings-average';
@@ -33,25 +30,31 @@ import { SavingsAverage } from '../savings-average/savings-average';
     ReactiveFormsModule,
     ExpenseCategory,
     SpendingTrend,
-    SavingsAverage
+    SavingsAverage,
   ],
-  changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './reports.html',
-  styleUrl: './reports.scss'
+  styleUrl: './reports.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Reports implements AfterViewInit {
+  /* ---------------- FORMS ---------------- */
   emiForm!: FormGroup;
+  reportForm!: FormGroup;
+
+  /* ---------------- STATE ---------------- */
   selectedEMIid!: string;
 
   isSidebarOpen = signal(false);
   isEMIModalOpen = false;
   isEditModalOpen = false;
 
-  // ⛔ start false — render charts only after view init
   isExpenseDataLoad = false;
   isSpendingTrendLoad = false;
   isSavingsAverageLoad = false;
 
+  isDownloading = false;
+
+  /* ---------------- SERVICES ---------------- */
   private emiService = inject(EMIService);
 
   emiList = this.emiService.emi;
@@ -60,28 +63,34 @@ export class Reports implements AfterViewInit {
     private fb: FormBuilder,
     private cdr: ChangeDetectorRef
   ) {
+    /* EMI FORM */
     this.emiForm = this.fb.group({
       name: ['', Validators.required],
       date: ['', Validators.required],
-      amount: ['', Validators.required]
+      amount: ['', Validators.required],
+    });
+
+    /* REPORT FORM */
+    this.reportForm = this.fb.group({
+      type: ['all', Validators.required],
+      month: ['all', Validators.required],
+      format: ['', Validators.required],
     });
   }
 
-  // 🔑 KEY FIX
+  /* ---------------- LIFECYCLE ---------------- */
   ngAfterViewInit(): void {
     setTimeout(() => {
       this.isExpenseDataLoad = true;
       this.isSpendingTrendLoad = true;
       this.isSavingsAverageLoad = true;
 
-      // Force chart libraries to recalc layout
       window.dispatchEvent(new Event('resize'));
-
-      // Notify Angular (OnPush)
       this.cdr.markForCheck();
     });
   }
 
+  /* ---------------- EMI MODALS ---------------- */
   openEMIModal() {
     this.isEMIModalOpen = true;
     document.body.style.overflow = 'hidden';
@@ -97,16 +106,26 @@ export class Reports implements AfterViewInit {
 
   openEditModal(emi: EMI) {
     this.selectedEMIid = emi._id;
-    this.isEMIModalOpen = false;
     this.isEditModalOpen = true;
+    this.isEMIModalOpen = false;
 
     this.emiForm.patchValue({
       name: emi.name,
       date: emi.date,
-      amount: emi.amount
+      amount: emi.amount,
     });
 
     document.body.style.overflow = 'hidden';
+  }
+
+  /* ---------------- EMI CRUD ---------------- */
+  addEMI() {
+    if (this.emiForm.invalid) return;
+
+    this.emiService.createEMI(this.emiForm.value).subscribe({
+      next: () => this.closeEMIModal(),
+      error: (err) => console.error(err),
+    });
   }
 
   updateEMI() {
@@ -114,16 +133,7 @@ export class Reports implements AfterViewInit {
 
     this.emiService.updateEMI(this.selectedEMIid, this.emiForm.value).subscribe({
       next: () => this.closeEMIModal(),
-      error: err => console.error(err)
-    });
-  }
-
-  addEMI() {
-    if (this.emiForm.invalid) return;
-
-    this.emiService.createEMI(this.emiForm.value).subscribe({
-      next: () => this.closeEMIModal(),
-      error: err => console.error(err)
+      error: (err) => console.error(err),
     });
   }
 
@@ -132,6 +142,7 @@ export class Reports implements AfterViewInit {
     this.emiService.deleteEMI(id).subscribe();
   }
 
+  /* ---------------- EMI STATUS ---------------- */
   getEMIstatus(date: string | Date) {
     const today = new Date();
     const emiDate = new Date(date);
@@ -143,16 +154,46 @@ export class Reports implements AfterViewInit {
       (emiDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24)
     );
 
-    if (diffDays < 0) {
-      return { text: 'OverDue', class: 'bg-red-100 text-red-700' };
-    }
-    if (diffDays <= 5) {
-      return { text: 'Due Soon', class: 'bg-yellow-100 text-yellow-700' };
-    }
-    if (diffDays <= 25) {
-      return { text: 'Upcoming', class: 'bg-green-100 text-green-700' };
-    }
+    if (diffDays < 0) return { text: 'OverDue', class: 'bg-red-100 text-red-700' };
+    if (diffDays <= 5) return { text: 'Due Soon', class: 'bg-yellow-100 text-yellow-700' };
+    if (diffDays <= 25) return { text: 'Upcoming', class: 'bg-green-100 text-green-700' };
 
     return null;
+  }
+
+  /* ---------------- REPORT DOWNLOAD ---------------- */
+  downloadReport() {
+    if (this.reportForm.invalid || this.isDownloading) return;
+
+    this.isDownloading = true;
+    const { type, month, format } = this.reportForm.value;
+
+    this.emiService.downloadReport({ type, month, format }).subscribe({
+      next: (response) => {
+        const blob = response.body!;
+        const contentDisposition = response.headers.get('content-disposition');
+
+        let fileName = `report.${format}`;
+        if (contentDisposition) {
+          const match = contentDisposition.match(/filename="?(.+)"?/);
+          if (match?.[1]) fileName = match[1];
+        }
+
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = fileName;
+        a.click();
+
+        window.URL.revokeObjectURL(url);
+        this.isDownloading = false;
+        this.cdr.markForCheck();
+      },
+      error: (err) => {
+        console.error(err);
+        this.isDownloading = false;
+        this.cdr.markForCheck();
+      },
+    });
   }
 }
